@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -25,9 +26,12 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
-	survey "github.com/AlecAivazis/survey/v2"
-	surveycore "github.com/AlecAivazis/survey/v2/core"
+	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/opentracing/opentracing-go"
 	"github.com/spf13/cobra"
 
@@ -813,6 +817,206 @@ func pythonCommands() []string {
 	return commands
 }
 
+// templatePickerItem is a single item in the templatePicker list.
+type templatePickerItem struct{ t workspace.Template }
+
+var _ list.DefaultItem = (*templatePickerItem)(nil)
+
+func newTemplatePickerItem(t workspace.Template) *templatePickerItem {
+	return &templatePickerItem{t: t}
+}
+
+// FilterValue is the value that will be used to filter this item when the user types.
+func (i *templatePickerItem) FilterValue() string {
+	return i.t.Name
+}
+
+// Title reports the title to display for this item in the list.
+func (i *templatePickerItem) Title() string { return i.t.Name }
+
+// Description reports the description for this item.
+func (i *templatePickerItem) Description() string {
+	return workspace.ValueOrDefaultProjectDescription("", i.t.ProjectDescription, i.t.Description)
+}
+
+// templatePickerItemDelegate renders *templatePickerItem values as items in the list.
+type templatePickerItemDelegate struct {
+	// Width of the column where the title is displayed.
+	// This should be larger than the width of the longest title.
+	TitleWidth int
+
+	// Style used to highlight letters of the title
+	// that match the filter value.
+	HighlightStyle lipgloss.Style
+
+	// STyle used for the ">" marker when an item is selected.
+	ArrowStyle lipgloss.Style
+}
+
+// Height reports the height each item will take up when rendered.
+func (d *templatePickerItemDelegate) Height() int { return 1 }
+
+// Spacing is the gap between cells.
+func (d *templatePickerItemDelegate) Spacing() int { return 0 }
+
+// Update receives messages all events on the list.
+// We don't have any per-tick updates to perform so this is a no-op.
+func (d *templatePickerItemDelegate) Update(_ tea.Msg, m *list.Model) tea.Cmd {
+	return nil
+}
+
+// Render writes a single item to the given io.Writer.
+// and highlights the portions of the item name that match the filter value.
+func (d *templatePickerItemDelegate) Render(w io.Writer, m list.Model, index int, item list.Item) {
+	t, ok := item.(*templatePickerItem)
+	contract.Assertf(ok, "expected *templatePickerItem, got %T", item)
+
+	// Whether the item is selected.
+	if index == m.Index() {
+		fmt.Fprint(w, d.ArrowStyle.Render("> "))
+	} else {
+		fmt.Fprint(w, "  ")
+	}
+
+	// Each title highlights the filter value typed so far.
+	// The filter performs a fuzzy search, so we go left-to-right,
+	// highlighting matches in order.
+	filter := m.FilterValue()
+	highlights := make([]int, 0, len(filter)) // indexes of runes in title to highlight
+	title := t.Title()
+	var pos int // current position in title
+	for _, r := range filter {
+		idx := strings.IndexRune(title[pos:], r)
+		if idx < 0 {
+			// No match for this character in the title.
+			// Unlikely, but ignore it.
+			continue
+		}
+
+		highlights = append(highlights, pos+idx)
+		pos += idx + utf8.RuneLen(r) // advance past the matched rune
+	}
+
+	var lastHighlightEnd int
+	for _, highlightIdx := range highlights {
+		fmt.Fprint(w, title[lastHighlightEnd:highlightIdx])
+
+		// Runes can be multi-byte.
+		// Decode the rune and advance past the highlighted rune.
+		r, runeLen := utf8.DecodeRuneInString(title[highlightIdx:])
+		lastHighlightEnd = highlightIdx + runeLen
+
+		fmt.Fprint(w, d.HighlightStyle.Render(string(r)))
+	}
+	// Any remaining non-highlighted portion of the title.
+	fmt.Fprint(w, title[lastHighlightEnd:])
+
+	padding := d.TitleWidth - len(title)
+	if padding < 1 {
+		// This is not possible because we set the column width
+		// to more than the length of the longest title.
+		// Guard against it nonetheless.
+		padding = 1
+	}
+	fmt.Fprintf(w, "%s%s", strings.Repeat(" ", padding), t.Description())
+}
+
+// templatePicker renders a list of templates to choose from.
+type templatePicker struct {
+	// Choice is set to the selected item
+	// when the user presses enter.
+	//
+	// Its value is nil if a template was not selected.
+	Choice *templatePickerItem
+
+	list      list.Model
+	templates []workspace.Template
+}
+
+var _ tea.Model = (*templatePicker)(nil)
+
+// newTemplatePicker builds a templatePicker model
+// that lets users pick from the given template.
+func newTemplatePicker(templates []workspace.Template) templatePicker {
+	// Find the longest title so we can find a column width
+	// that fits all titles.
+	items := make([]list.Item, len(templates))
+	var longestTitle string
+	for i, t := range templates {
+		items[i] = newTemplatePickerItem(t)
+		if len(t.Name) > len(longestTitle) {
+			longestTitle = t.Name
+		}
+	}
+
+	delegate := templatePickerItemDelegate{
+		TitleWidth:     len(longestTitle) + 4,
+		ArrowStyle:     lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00FF00")),
+		HighlightStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("#00FF00")),
+	}
+
+	// Width and height are determined by the terminal size on startup.
+	list := list.New(items, &delegate, 0 /* width */, 0 /* height */)
+	list.Title = "Please choose a template"
+	list.Styles.TitleBar = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFFDF5")).
+		Background(lipgloss.Color("#25A065")).
+		AlignHorizontal(lipgloss.Center)
+	list.Styles.Title = lipgloss.NewStyle()
+
+	list.SetShowStatusBar(false)
+	// We don't show the filter because we highlight those characters
+	// in the listing itself.
+	list.SetShowFilter(false)
+	// Show Enter in the help menu (accessible with ?).
+	list.AdditionalShortHelpKeys = func() []key.Binding {
+		return []key.Binding{
+			key.NewBinding(
+				key.WithKeys("enter"),
+				key.WithHelp("enter", "select template"),
+			),
+		}
+	}
+
+	return templatePicker{
+		list:      list,
+		templates: templates,
+	}
+}
+
+func (t templatePicker) Init() tea.Cmd { return nil }
+
+func (t templatePicker) Update(msg tea.Msg) (_ tea.Model, cmd tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		t.list.SetSize(msg.Width, msg.Height)
+		t.list.Styles.TitleBar = t.list.Styles.TitleBar.Width(t.list.Width())
+
+	case tea.KeyMsg:
+		switch msg.Type {
+		case tea.KeyCtrlC:
+			return t, tea.Quit
+
+		case tea.KeyEnter:
+			if t.list.FilterState() == list.Filtering {
+				// If we're filtering, let the list handle the Enter key.
+				// This will just accept the filter value.
+				break
+			}
+
+			t.Choice = t.list.SelectedItem().(*templatePickerItem)
+			return t, tea.Quit
+		}
+	}
+
+	t.list, cmd = t.list.Update(msg)
+	return t, cmd
+}
+
+func (t templatePicker) View() string {
+	return t.list.View()
+}
+
 // chooseTemplate will prompt the user to choose amongst the available templates.
 func chooseTemplate(templates []workspace.Template, opts display.Options) (workspace.Template, error) {
 	const chooseTemplateErr = "no template selected; please use `pulumi new` to choose one"
@@ -820,25 +1024,17 @@ func chooseTemplate(templates []workspace.Template, opts display.Options) (works
 		return workspace.Template{}, errors.New(chooseTemplateErr)
 	}
 
-	// Customize the prompt a little bit (and disable color since it doesn't match our scheme).
-	surveycore.DisableColor = true
-
-	options, optionToTemplateMap := templatesToOptionArrayAndMap(templates, true)
-	nopts := len(options)
-	pageSize := optimalPageSize(optimalPageSizeOpts{nopts: nopts})
-	message := fmt.Sprintf("\rPlease choose a template (%d/%d shown):\n", pageSize, nopts)
-	message = opts.Color.Colorize(colors.SpecPrompt + message + colors.Reset)
-
-	var option string
-	if err := survey.AskOne(&survey.Select{
-		Message:  message,
-		Options:  options,
-		PageSize: pageSize,
-	}, &option, surveyIcons(opts.Color)); err != nil {
+	picker := newTemplatePicker(templates)
+	final, err := tea.NewProgram(picker).Run()
+	if err != nil {
+		return workspace.Template{}, errors.New(chooseTemplateErr)
+	}
+	picker = final.(templatePicker)
+	if picker.Choice == nil {
 		return workspace.Template{}, errors.New(chooseTemplateErr)
 	}
 
-	return optionToTemplateMap[option], nil
+	return picker.Choice.t, nil
 }
 
 // parseConfig parses the config values passed via command line flags.
