@@ -1,4 +1,4 @@
-// Copyright 2016-2022, Pulumi Corporation.
+// Copyright 2016-2023, Pulumi Corporation.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/pulumi/pulumi/pkg/v3/backend"
 	"github.com/pulumi/pulumi/pkg/v3/backend/display"
@@ -31,7 +33,10 @@ import (
 )
 
 type stackChangeSecretsProviderCmd struct {
-	stack string
+	stdout io.Writer
+
+	stack   string
+	discard bool
 }
 
 func newStackChangeSecretsProviderCmd() *cobra.Command {
@@ -68,21 +73,29 @@ func newStackChangeSecretsProviderCmd() *cobra.Command {
 		&scspcmd.stack, "stack", "s", "",
 		"The name of the stack to operate on. Defaults to the current stack")
 
+	cmd.PersistentFlags().BoolVar(
+		&scspcmd.discard, "discard", false,
+		"If true current secrets will be discarded, useful if encryption keys have been lost")
+
 	return cmd
 }
 
 func (cmd *stackChangeSecretsProviderCmd) Run(ctx context.Context, args []string) error {
+	stdout := cmd.stdout
+	if stdout == nil {
+		stdout = os.Stdout
+	}
+
 	opts := display.Options{
 		Color: cmdutil.GetGlobalColorization(),
 	}
 
-	project, _, err := readProject()
-	if err != nil {
+	if err := validateSecretsProvider(args[0]); err != nil {
 		return err
 	}
 
-	// Validate secrets provider type
-	if err := validateSecretsProvider(args[0]); err != nil {
+	project, _, err := readProject()
+	if err != nil {
 		return err
 	}
 
@@ -91,6 +104,7 @@ func (cmd *stackChangeSecretsProviderCmd) Run(ctx context.Context, args []string
 	if err != nil {
 		return err
 	}
+
 	currentProjectStack, err := loadProjectStack(project, currentStack)
 	if err != nil {
 		return err
@@ -122,7 +136,7 @@ func (cmd *stackChangeSecretsProviderCmd) Run(ctx context.Context, args []string
 	}
 
 	// Fixup the checkpoint
-	fmt.Printf("Migrating old configuration and state to new secrets provider\n")
+	fmt.Fprintf(stdout, "Migrating old configuration and state to new secrets provider\n")
 	return migrateOldConfigAndCheckpointToNewSecretsProvider(ctx, project, currentStack, currentProjectStack, decrypter)
 }
 
