@@ -87,6 +87,9 @@ type GoPackageInfo struct {
 	// InternalDependencies are blank imports that are emitted in the SDK so that `go mod tidy` does not remove the
 	// associated module dependencies from the SDK's go.mod.
 	InternalDependencies []string `json:"internalDependencies,omitempty"`
+
+	// When set to true, the generator will emit a generic variant of the SDK
+	EmitGenericVariant bool `json:"emitGenericVariant,omitempty"`
 }
 
 // Importer implements schema.Language for Go.
