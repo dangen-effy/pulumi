@@ -93,7 +93,7 @@ type GoPackageInfo struct {
 	InternalDependencies []string `json:"internalDependencies,omitempty"`
 
 	// When set to true, the generator will emit a generic variant of the SDK
-	EmitGenericVariant bool `json:"emitGenericVariant,omitempty"`
+	EmitOnlyGenericVariant bool `json:"emitOnlyGenericVariant,omitempty"`
 }
 
 // Importer implements schema.Language for Go.
