@@ -84,6 +84,37 @@ func TestGeneratePackage(t *testing.T) {
 	})
 }
 
+func TestSingleGeneratePackage(t *testing.T) {
+	t.Parallel()
+
+	generatePackage := func(tool string, pkg *schema.Package, files map[string][]byte) (map[string][]byte, error) {
+		for f := range files {
+			t.Logf("Ignoring extraFile %s", f)
+		}
+
+		return GeneratePackage(tool, pkg)
+	}
+
+	testToFind := "simple-resource-schema"
+	tests := make([]*test.SDKTest, 1)
+	for _, test := range test.PulumiPulumiSDKTests {
+		if test.Directory == testToFind {
+			tests[0] = test
+			break
+		}
+	}
+
+	test.TestSDKCodegen(t, &test.SDKCodegenOptions{
+		Language:   "go",
+		GenPackage: generatePackage,
+		Checks: map[string]test.CodegenCheck{
+			"go/compile": typeCheckGeneratedPackage,
+			"go/test":    testGeneratedPackage,
+		},
+		TestCases: tests,
+	})
+}
+
 func inferModuleName(codeDir string) string {
 	// For example for this path:
 	//

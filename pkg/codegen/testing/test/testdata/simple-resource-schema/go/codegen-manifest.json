@@ -12,6 +12,15 @@
     "example/pulumi-plugin.json",
     "example/pulumiTypes.go",
     "example/resource.go",
-    "example/typeUses.go"
+    "example/typeUses.go",
+    "example/x/argFunction.go",
+    "example/x/barResource.go",
+    "example/x/doc.go",
+    "example/x/fooResource.go",
+    "example/x/otherResource.go",
+    "example/x/provider.go",
+    "example/x/pulumiTypes.go",
+    "example/x/resource.go",
+    "example/x/typeUses.go"
   ]
 }
