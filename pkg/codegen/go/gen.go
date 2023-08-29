@@ -1145,6 +1145,7 @@ func genInputImplementationWithArgs(w io.Writer, genArgs genInputImplementationA
 	fmt.Fprintf(w, "\treturn reflect.TypeOf((*%s)(nil)).Elem()\n", elementType)
 	fmt.Fprintf(w, "}\n\n")
 
+	var hasToOutput bool
 	if genArgs.toOutputMethods {
 		fmt.Fprintf(w, "func (i %s) To%sOutput() %sOutput {\n", receiverType, Title(name), name)
 		fmt.Fprintf(w, "\treturn i.To%sOutputWithContext(context.Background())\n", Title(name))
@@ -1153,6 +1154,15 @@ func genInputImplementationWithArgs(w io.Writer, genArgs genInputImplementationA
 		fmt.Fprintf(w, "func (i %s) To%sOutputWithContext(ctx context.Context) %sOutput {\n", receiverType, Title(name), name)
 		fmt.Fprintf(w, "\treturn pulumi.ToOutputWithContext(ctx, i).(%sOutput)\n", name)
 		fmt.Fprintf(w, "}\n\n")
+
+		// Generate 'ToOuput(context.Context) pux.Output[T]' method
+		// to satisfy pux.Input[T].
+		fmt.Fprintf(w, "func (i %s) ToOutput(ctx context.Context) pulumix.Output[%s] {\n", receiverType, elementType)
+		fmt.Fprintf(w, "\treturn pulumix.Output[%s]{\n", elementType)
+		fmt.Fprintf(w, "\t\tOutputState: i.To%sOutputWithContext(ctx).OutputState,\n", Title(name))
+		fmt.Fprintf(w, "\t}\n")
+		fmt.Fprintf(w, "}\n\n")
+		hasToOutput = true
 	}
 
 	if genArgs.ptrMethods {
@@ -1167,6 +1177,16 @@ func genInputImplementationWithArgs(w io.Writer, genArgs genInputImplementationA
 			fmt.Fprintf(w, "\treturn pulumi.ToOutputWithContext(ctx, i).(%sPtrOutput)\n", name)
 		}
 		fmt.Fprintf(w, "}\n\n")
+
+		if !hasToOutput {
+			// Generate 'ToOuput(context.Context) pux.Output[*T]' method
+			// to satisfy pux.Input[*T].
+			fmt.Fprintf(w, "func (i %s) ToOutput(ctx context.Context) pulumix.Output[*%s] {\n", receiverType, elementType)
+			fmt.Fprintf(w, "\treturn pulumix.Output[*%s]{\n", elementType)
+			fmt.Fprintf(w, "\t\tOutputState: i.To%sPtrOutputWithContext(ctx).OutputState,\n", Title(name))
+			fmt.Fprintf(w, "\t}\n")
+			fmt.Fprintf(w, "}\n\n")
+		}
 	}
 }
 
@@ -1196,6 +1216,14 @@ func genOutputType(w io.Writer, baseName, elementType string, ptrMethods bool) {
 		fmt.Fprintf(w, "\t}).(%sPtrOutput)\n", baseName)
 		fmt.Fprintf(w, "}\n\n")
 	}
+
+	// Generate 'ToOuput(context.Context) pux.Output[T]' method
+	// to satisfy pux.Input[T].
+	fmt.Fprintf(w, "func (o %sOutput) ToOutput(ctx context.Context) pulumix.Output[%s] {\n", baseName, elementType)
+	fmt.Fprintf(w, "\treturn pulumix.Output[%s]{\n", elementType)
+	fmt.Fprintf(w, "\t\tOutputState: o.OutputState,\n")
+	fmt.Fprintf(w, "\t}\n")
+	fmt.Fprintf(w, "}\n\n")
 }
 
 func genArrayOutput(w io.Writer, baseName, elementType string) {
@@ -1393,6 +1421,13 @@ func (pkg *pkgContext) genEnumInputTypes(w io.Writer, name string, enumType *sch
 	fmt.Fprintf(w, "return pulumi.ToOutputWithContext(ctx, in).(%sPtrOutput)\n", name)
 	fmt.Fprintf(w, "}\n")
 	fmt.Fprintln(w)
+
+	// ToOutput implementation for pux.Input.
+	fmt.Fprintf(w, "func (in *%sPtr) ToOutput(ctx context.Context) pulumix.Output[*%s] {\n", typeName, name)
+	fmt.Fprintf(w, "\treturn pulumix.Output[*%s]{\n", name)
+	fmt.Fprintf(w, "\t\tOutputState: in.To%sPtrOutputWithContext(ctx).OutputState,\n", name)
+	fmt.Fprintf(w, "\t}\n")
+	fmt.Fprintf(w, "}\n\n")
 }
 
 func (pkg *pkgContext) genEnumInputFuncs(w io.Writer, typeName string, enum *schema.EnumType, elementArgsType, inputType, asFuncName string) {
@@ -2339,6 +2374,7 @@ func (pkg *pkgContext) genFunctionCodeFile(f *schema.Function) (string, error) {
 	var imports []string
 	if NeedsGoOutputVersion(f) {
 		imports = []string{"context", "reflect"}
+		importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 	}
 
 	pkg.genHeader(buffer, imports, importsAndAliases, false /* isUtil */)
@@ -4035,6 +4071,7 @@ func GeneratePackage(tool string, pkg *schema.Package) (map[string][]byte, error
 			pkg.getImports(resource, importsAndAliases)
 			importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumi"] = ""
 			importsAndAliases[path.Join(pkg.importBasePath, pkg.internalModuleName)] = ""
+			importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 			buffer := &bytes.Buffer{}
 			pkg.genHeader(buffer, []string{"context", "reflect"}, importsAndAliases, false /* isUtil */)
 
@@ -4100,6 +4137,7 @@ func GeneratePackage(tool string, pkg *schema.Package) (map[string][]byte, error
 			if hasOutputs {
 				goImports = []string{"context", "reflect"}
 				imports["github.com/pulumi/pulumi/sdk/v3/go/pulumi"] = ""
+				imports["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 			}
 
 			buffer := &bytes.Buffer{}
@@ -4230,6 +4268,7 @@ func generateTypes(
 	if hasOutputs {
 		goImports = []string{"context", "reflect"}
 		importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumi"] = ""
+		importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 	}
 
 	if useGenericTypes {
