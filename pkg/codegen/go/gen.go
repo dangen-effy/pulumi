@@ -1643,7 +1643,7 @@ func (pkg *pkgContext) genInputArgsStruct(
 	w io.Writer,
 	typeName string,
 	t *schema.ObjectType,
-	emitGenericVariant bool,
+	useGenericTypes bool,
 ) {
 	contract.Assertf(t.IsInputShape(), "Object type must have input shape")
 
@@ -1652,7 +1652,7 @@ func (pkg *pkgContext) genInputArgsStruct(
 	for _, p := range t.Properties {
 		printCommentWithDeprecationMessage(w, p.Comment, p.DeprecationMessage, true)
 		inputType := pkg.typeString(p.Type)
-		if emitGenericVariant {
+		if useGenericTypes {
 			inputType = pkg.genericInputType(p.Type)
 		}
 		fmt.Fprintf(w, "\t%s %s `pulumi:\"%s\"`\n", pkg.fieldName(nil, p), inputType, p.Name)
@@ -2531,6 +2531,30 @@ func (pkg *pkgContext) functionResultTypeName(f *schema.Function) string {
 }
 
 func (pkg *pkgContext) genFunctionOutputGenericVersion(w io.Writer, f *schema.Function) {
+	originalName := pkg.functionName(f)
+	name := originalName + "Output"
+	originalResultTypeName := pkg.functionResultTypeName(f)
+	resultTypeName := fmt.Sprintf("pux.Output[*%s]", originalResultTypeName)
+
+	code := `
+func ${fn}Output(ctx *pulumi.Context, args ${fn}OutputArgs, opts ...pulumi.InvokeOption) ${outputType} {
+	return pux.Apply(args, func(plainArgs ${fn}Args) (${fn}Result, error) {
+		r, err := ${fn}(ctx, &plainArgs, opts...)
+		var s ${fn}Result
+		if r != nil {
+			s = *r
+		}
+		return s, err
+	})
+}
+`
+
+	code = strings.ReplaceAll(code, "${fn}", originalName)
+	code = strings.ReplaceAll(code, "${outputType}", resultTypeName)
+	fmt.Fprint(w, code)
+
+	useGenericTypes := true
+	pkg.genInputArgsStruct(w, name+"Args", f.Inputs.InputShape, useGenericTypes)
 }
 
 func (pkg *pkgContext) genFunctionOutputVersion(w io.Writer, f *schema.Function, useGenericTypes bool) {
@@ -4247,7 +4271,8 @@ func generateTypes(
 	pkg *pkgContext,
 	types []*schema.ObjectType,
 	knownTypes []schema.Type,
-	useGenericTypes bool) error {
+	useGenericTypes bool,
+) error {
 	hasOutputs, importsAndAliases := false, map[string]string{}
 	for _, t := range types {
 		pkg.getImports(t, importsAndAliases)
