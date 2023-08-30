@@ -19,6 +19,10 @@ class NoRecursiveArgs:
         The set of arguments for constructing a NoRecursive resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class NoRecursive(pulumi.CustomResource):

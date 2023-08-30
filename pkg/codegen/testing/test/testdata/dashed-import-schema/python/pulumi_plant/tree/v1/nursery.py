@@ -22,9 +22,19 @@ class NurseryArgs:
         :param pulumi.Input[Sequence[pulumi.Input['RubberTreeVariety']]] varieties: The varieties available
         :param pulumi.Input[Mapping[str, pulumi.Input['TreeSize']]] sizes: The sizes of trees available
         """
-        pulumi.set(__self__, "varieties", varieties)
+        NurseryArgs.__configure__(
+            varieties=varieties,
+            sizes=sizes,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             varieties: pulumi.Input[Sequence[pulumi.Input['RubberTreeVariety']]],
+             sizes: Optional[pulumi.Input[Mapping[str, pulumi.Input['TreeSize']]]] = None,
+             __setter=lambda key, value: ...):
+        __setter("varieties", varieties)
         if sizes is not None:
-            pulumi.set(__self__, "sizes", sizes)
+            __setter("sizes", sizes)
 
     @property
     @pulumi.getter

@@ -26,13 +26,27 @@ class FooArgs:
         :param pulumi.Input['KubeClientSettingsArgs'] kube_client_settings: Options for tuning the Kubernetes client used by a Provider.
         :param pulumi.Input['LayeredTypeArgs'] settings: describing things
         """
-        pulumi.set(__self__, "backup_kube_client_settings", backup_kube_client_settings)
+        FooArgs.__configure__(
+            backup_kube_client_settings=backup_kube_client_settings,
+            argument=argument,
+            kube_client_settings=kube_client_settings,
+            settings=settings,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             backup_kube_client_settings: pulumi.Input['KubeClientSettingsArgs'],
+             argument: Optional[str] = None,
+             kube_client_settings: Optional[pulumi.Input['KubeClientSettingsArgs']] = None,
+             settings: Optional[pulumi.Input['LayeredTypeArgs']] = None,
+             __setter=lambda key, value: ...):
+        __setter("backup_kube_client_settings", backup_kube_client_settings)
         if argument is not None:
-            pulumi.set(__self__, "argument", argument)
+            __setter("argument", argument)
         if kube_client_settings is not None:
-            pulumi.set(__self__, "kube_client_settings", kube_client_settings)
+            __setter("kube_client_settings", kube_client_settings)
         if settings is not None:
-            pulumi.set(__self__, "settings", settings)
+            __setter("settings", settings)
 
     @property
     @pulumi.getter(name="backupKubeClientSettings")
@@ -137,10 +151,22 @@ class Foo(pulumi.CustomResource):
             __props__ = FooArgs.__new__(FooArgs)
 
             __props__.__dict__["argument"] = argument
+            if isinstance(backup_kube_client_settings, dict):
+                def __setter(key, value):
+                    backup_kube_client_settings[key] = value
+                KubeClientSettingsArgs.__configure__(**backup_kube_client_settings, __setter=__setter)
             if backup_kube_client_settings is None and not opts.urn:
                 raise TypeError("Missing required property 'backup_kube_client_settings'")
             __props__.__dict__["backup_kube_client_settings"] = backup_kube_client_settings
+            if isinstance(kube_client_settings, dict):
+                def __setter(key, value):
+                    kube_client_settings[key] = value
+                KubeClientSettingsArgs.__configure__(**kube_client_settings, __setter=__setter)
             __props__.__dict__["kube_client_settings"] = kube_client_settings
+            if isinstance(settings, dict):
+                def __setter(key, value):
+                    settings[key] = value
+                LayeredTypeArgs.__configure__(**settings, __setter=__setter)
             __props__.__dict__["settings"] = settings
             __props__.__dict__["default_kube_client_settings"] = None
         super(Foo, __self__).__init__(

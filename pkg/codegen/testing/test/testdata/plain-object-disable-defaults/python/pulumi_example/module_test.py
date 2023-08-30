@@ -22,10 +22,20 @@ class ModuleTestArgs:
         """
         The set of arguments for constructing a ModuleTest resource.
         """
+        ModuleTestArgs.__configure__(
+            mod1=mod1,
+            val=val,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             mod1: Optional[pulumi.Input['_mod1.TypArgs']] = None,
+             val: Optional[pulumi.Input['TypArgs']] = None,
+             __setter=lambda key, value: ...):
         if mod1 is not None:
-            pulumi.set(__self__, "mod1", mod1)
+            __setter("mod1", mod1)
         if val is not None:
-            pulumi.set(__self__, "val", val)
+            __setter("val", val)
 
     @property
     @pulumi.getter
@@ -93,7 +103,15 @@ class ModuleTest(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ModuleTestArgs.__new__(ModuleTestArgs)
 
+            if isinstance(mod1, dict):
+                def __setter(key, value):
+                    mod1[key] = value
+                _mod1.TypArgs.__configure__(**mod1, __setter=__setter)
             __props__.__dict__["mod1"] = mod1
+            if isinstance(val, dict):
+                def __setter(key, value):
+                    val[key] = value
+                TypArgs.__configure__(**val, __setter=__setter)
             __props__.__dict__["val"] = val
         super(ModuleTest, __self__).__init__(
             'example:index:moduleTest',

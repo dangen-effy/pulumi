@@ -23,12 +23,22 @@ class ProviderArgs:
         :param pulumi.Input[Union[str, 'Color']] favorite_color: this is a relaxed string enum which can also be set via env var
         :param pulumi.Input[Sequence[pulumi.Input['_config.SandwichArgs']]] secret_sandwiches: Super duper secret sandwiches.
         """
+        ProviderArgs.__configure__(
+            favorite_color=favorite_color,
+            secret_sandwiches=secret_sandwiches,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             favorite_color: Optional[pulumi.Input[Union[str, 'Color']]] = None,
+             secret_sandwiches: Optional[pulumi.Input[Sequence[pulumi.Input['_config.SandwichArgs']]]] = None,
+             __setter=lambda key, value: ...):
         if favorite_color is None:
             favorite_color = _utilities.get_env('FAVE_COLOR')
         if favorite_color is not None:
-            pulumi.set(__self__, "favorite_color", favorite_color)
+            __setter("favorite_color", favorite_color)
         if secret_sandwiches is not None:
-            pulumi.set(__self__, "secret_sandwiches", secret_sandwiches)
+            __setter("secret_sandwiches", secret_sandwiches)
 
     @property
     @pulumi.getter(name="favoriteColor")

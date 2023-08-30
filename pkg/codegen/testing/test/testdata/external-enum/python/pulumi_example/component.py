@@ -21,10 +21,20 @@ class ComponentArgs:
         """
         The set of arguments for constructing a Component resource.
         """
+        ComponentArgs.__configure__(
+            local_enum=local_enum,
+            remote_enum=remote_enum,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             local_enum: Optional[pulumi.Input['local.MyEnum']] = None,
+             remote_enum: Optional[pulumi.Input['pulumi_google_native.accesscontextmanager.v1.DevicePolicyAllowedDeviceManagementLevelsItem']] = None,
+             __setter=lambda key, value: ...):
         if local_enum is not None:
-            pulumi.set(__self__, "local_enum", local_enum)
+            __setter("local_enum", local_enum)
         if remote_enum is not None:
-            pulumi.set(__self__, "remote_enum", remote_enum)
+            __setter("remote_enum", remote_enum)
 
     @property
     @pulumi.getter(name="localEnum")

@@ -23,15 +23,33 @@ class Foo:
                  b: Optional[bool] = None,
                  d: Optional[int] = None,
                  f: Optional[str] = None):
-        pulumi.set(__self__, "a", a)
-        pulumi.set(__self__, "c", c)
-        pulumi.set(__self__, "e", e)
+        Foo.__configure__(
+            a=a,
+            c=c,
+            e=e,
+            b=b,
+            d=d,
+            f=f,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             a: bool,
+             c: int,
+             e: str,
+             b: Optional[bool] = None,
+             d: Optional[int] = None,
+             f: Optional[str] = None,
+             __setter=lambda key, value: ...):
+        __setter("a", a)
+        __setter("c", c)
+        __setter("e", e)
         if b is not None:
-            pulumi.set(__self__, "b", b)
+            __setter("b", b)
         if d is not None:
-            pulumi.set(__self__, "d", d)
+            __setter("d", d)
         if f is not None:
-            pulumi.set(__self__, "f", f)
+            __setter("f", f)
 
     @property
     @pulumi.getter
@@ -97,15 +115,33 @@ class FooArgs:
                  b: Optional[bool] = None,
                  d: Optional[int] = None,
                  f: Optional[str] = None):
-        pulumi.set(__self__, "a", a)
-        pulumi.set(__self__, "c", c)
-        pulumi.set(__self__, "e", e)
+        FooArgs.__configure__(
+            a=a,
+            c=c,
+            e=e,
+            b=b,
+            d=d,
+            f=f,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             a: bool,
+             c: int,
+             e: str,
+             b: Optional[bool] = None,
+             d: Optional[int] = None,
+             f: Optional[str] = None,
+             __setter=lambda key, value: ...):
+        __setter("a", a)
+        __setter("c", c)
+        __setter("e", e)
         if b is not None:
-            pulumi.set(__self__, "b", b)
+            __setter("b", b)
         if d is not None:
-            pulumi.set(__self__, "d", d)
+            __setter("d", d)
         if f is not None:
-            pulumi.set(__self__, "f", f)
+            __setter("f", f)
 
     @property
     @pulumi.getter

@@ -20,8 +20,16 @@ class ProviderArgs:
         The set of arguments for constructing a Provider resource.
         :param pulumi.Input['HelmReleaseSettingsArgs'] helm_release_settings: BETA FEATURE - Options to configure the Helm Release resource.
         """
+        ProviderArgs.__configure__(
+            helm_release_settings=helm_release_settings,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             helm_release_settings: Optional[pulumi.Input['HelmReleaseSettingsArgs']] = None,
+             __setter=lambda key, value: ...):
         if helm_release_settings is not None:
-            pulumi.set(__self__, "helm_release_settings", helm_release_settings)
+            __setter("helm_release_settings", helm_release_settings)
 
     @property
     @pulumi.getter(name="helmReleaseSettings")
@@ -84,6 +92,10 @@ class Provider(pulumi.ProviderResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ProviderArgs.__new__(ProviderArgs)
 
+            if isinstance(helm_release_settings, dict):
+                def __setter(key, value):
+                    helm_release_settings[key] = value
+                HelmReleaseSettingsArgs.__configure__(**helm_release_settings, __setter=__setter)
             __props__.__dict__["helm_release_settings"] = pulumi.Output.from_input(helm_release_settings).apply(pulumi.runtime.to_json) if helm_release_settings is not None else None
         super(Provider, __self__).__init__(
             'example',

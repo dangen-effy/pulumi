@@ -24,17 +24,37 @@ class PetArgs:
                  name: Optional[pulumi.Input['pulumi_random.RandomPet']] = None,
                  name_array: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_random.RandomPet']]]] = None,
                  name_map: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_random.RandomPet']]]] = None):
-        pulumi.set(__self__, "required_name", required_name)
-        pulumi.set(__self__, "required_name_array", required_name_array)
-        pulumi.set(__self__, "required_name_map", required_name_map)
+        PetArgs.__configure__(
+            required_name=required_name,
+            required_name_array=required_name_array,
+            required_name_map=required_name_map,
+            age=age,
+            name=name,
+            name_array=name_array,
+            name_map=name_map,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             required_name: pulumi.Input['pulumi_random.RandomPet'],
+             required_name_array: pulumi.Input[Sequence[pulumi.Input['pulumi_random.RandomPet']]],
+             required_name_map: pulumi.Input[Mapping[str, pulumi.Input['pulumi_random.RandomPet']]],
+             age: Optional[pulumi.Input[int]] = None,
+             name: Optional[pulumi.Input['pulumi_random.RandomPet']] = None,
+             name_array: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_random.RandomPet']]]] = None,
+             name_map: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_random.RandomPet']]]] = None,
+             __setter=lambda key, value: ...):
+        __setter("required_name", required_name)
+        __setter("required_name_array", required_name_array)
+        __setter("required_name_map", required_name_map)
         if age is not None:
-            pulumi.set(__self__, "age", age)
+            __setter("age", age)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if name_array is not None:
-            pulumi.set(__self__, "name_array", name_array)
+            __setter("name_array", name_array)
         if name_map is not None:
-            pulumi.set(__self__, "name_map", name_map)
+            __setter("name_map", name_map)
 
     @property
     @pulumi.getter(name="requiredName")

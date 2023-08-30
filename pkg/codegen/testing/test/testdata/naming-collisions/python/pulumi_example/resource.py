@@ -18,6 +18,10 @@ class ResourceArgs:
         The set of arguments for constructing a Resource resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Resource(pulumi.CustomResource):

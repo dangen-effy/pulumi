@@ -21,10 +21,20 @@ class ComponentArgs:
         """
         The set of arguments for constructing a Component resource.
         """
+        ComponentArgs.__configure__(
+            eni_config=eni_config,
+            pod=pod,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             eni_config: Optional[pulumi.Input[Mapping[str, pulumi.Input['_crd_k8s_amazonaws_com.v1alpha1.ENIConfigSpecArgs']]]] = None,
+             pod: Optional[pulumi.Input['pulumi_kubernetes.core.v1.PodArgs']] = None,
+             __setter=lambda key, value: ...):
         if eni_config is not None:
-            pulumi.set(__self__, "eni_config", eni_config)
+            __setter("eni_config", eni_config)
         if pod is not None:
-            pulumi.set(__self__, "pod", pod)
+            __setter("pod", pod)
 
     @property
     @pulumi.getter(name="eniConfig")
@@ -95,6 +105,10 @@ class Component(pulumi.ComponentResource):
             __props__ = ComponentArgs.__new__(ComponentArgs)
 
             __props__.__dict__["eni_config"] = eni_config
+            if isinstance(pod, dict):
+                def __setter(key, value):
+                    pod[key] = value
+                pulumi_kubernetes.core.v1.PodArgs.__configure__(**pod, __setter=__setter)
             __props__.__dict__["pod"] = pod
         super(Component, __self__).__init__(
             'foo:index:Component',

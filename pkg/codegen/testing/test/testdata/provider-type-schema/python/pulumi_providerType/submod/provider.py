@@ -18,8 +18,16 @@ class ProviderArgs:
         """
         The set of arguments for constructing a Provider resource.
         """
+        ProviderArgs.__configure__(
+            a=a,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             a: Optional[bool] = None,
+             __setter=lambda key, value: ...):
         if a is not None:
-            pulumi.set(__self__, "a", a)
+            __setter("a", a)
 
     @property
     @pulumi.getter

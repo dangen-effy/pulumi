@@ -24,8 +24,16 @@ __all__ = [
 class ConfigMap(dict):
     def __init__(__self__, *,
                  config: Optional[str] = None):
+        ConfigMap.__configure__(
+            config=config,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             config: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if config is not None:
-            pulumi.set(__self__, "config", config)
+            __setter("config", config)
 
     @property
     @pulumi.getter
@@ -62,16 +70,32 @@ class Object(dict):
         :param Sequence[Sequence['SomeOtherObject']] others: List of lists of other objects
         :param Mapping[str, Sequence['SomeOtherObject']] still_others: Mapping from string to list of some other object
         """
+        Object.__configure__(
+            bar=bar,
+            configs=configs,
+            foo=foo,
+            others=others,
+            still_others=still_others,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             bar: Optional[str] = None,
+             configs: Optional[Sequence['outputs.ConfigMap']] = None,
+             foo: Optional['Resource'] = None,
+             others: Optional[Sequence[Sequence['outputs.SomeOtherObject']]] = None,
+             still_others: Optional[Mapping[str, Sequence['outputs.SomeOtherObject']]] = None,
+             __setter=lambda key, value: ...):
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
         if configs is not None:
-            pulumi.set(__self__, "configs", configs)
+            __setter("configs", configs)
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
         if others is not None:
-            pulumi.set(__self__, "others", others)
+            __setter("others", others)
         if still_others is not None:
-            pulumi.set(__self__, "still_others", still_others)
+            __setter("still_others", still_others)
 
     @property
     @pulumi.getter
@@ -110,9 +134,19 @@ class ObjectWithNodeOptionalInputs(dict):
     def __init__(__self__, *,
                  foo: str,
                  bar: Optional[int] = None):
-        pulumi.set(__self__, "foo", foo)
+        ObjectWithNodeOptionalInputs.__configure__(
+            foo=foo,
+            bar=bar,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             foo: str,
+             bar: Optional[int] = None,
+             __setter=lambda key, value: ...):
+        __setter("foo", foo)
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
 
     @property
     @pulumi.getter
@@ -129,8 +163,16 @@ class ObjectWithNodeOptionalInputs(dict):
 class OutputOnlyObjectType(dict):
     def __init__(__self__, *,
                  foo: Optional[str] = None):
+        OutputOnlyObjectType.__configure__(
+            foo=foo,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             foo: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
 
     @property
     @pulumi.getter
@@ -142,8 +184,16 @@ class OutputOnlyObjectType(dict):
 class SomeOtherObject(dict):
     def __init__(__self__, *,
                  baz: Optional[str] = None):
+        SomeOtherObject.__configure__(
+            baz=baz,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             baz: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if baz is not None:
-            pulumi.set(__self__, "baz", baz)
+            __setter("baz", baz)
 
     @property
     @pulumi.getter

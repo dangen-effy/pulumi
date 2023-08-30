@@ -20,7 +20,15 @@ class RegistryGeoReplicationArgs:
         The set of arguments for constructing a RegistryGeoReplication resource.
         :param pulumi.Input['pulumi_azure_native.resources.ResourceGroup'] resource_group: The resource group that hosts the component resource
         """
-        pulumi.set(__self__, "resource_group", resource_group)
+        RegistryGeoReplicationArgs.__configure__(
+            resource_group=resource_group,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             resource_group: pulumi.Input['pulumi_azure_native.resources.ResourceGroup'],
+             __setter=lambda key, value: ...):
+        __setter("resource_group", resource_group)
 
     @property
     @pulumi.getter(name="resourceGroup")

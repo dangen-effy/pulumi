@@ -20,6 +20,10 @@ class CatArgs:
         The set of arguments for constructing a Cat resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Cat(pulumi.CustomResource):

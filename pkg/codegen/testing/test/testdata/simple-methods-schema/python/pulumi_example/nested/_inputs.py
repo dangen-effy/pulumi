@@ -18,10 +18,20 @@ class Baz:
     def __init__(__self__, *,
                  hello: Optional[str] = None,
                  world: Optional[str] = None):
+        Baz.__configure__(
+            hello=hello,
+            world=world,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             hello: Optional[str] = None,
+             world: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if hello is not None:
-            pulumi.set(__self__, "hello", hello)
+            __setter("hello", hello)
         if world is not None:
-            pulumi.set(__self__, "world", world)
+            __setter("world", world)
 
     @property
     @pulumi.getter

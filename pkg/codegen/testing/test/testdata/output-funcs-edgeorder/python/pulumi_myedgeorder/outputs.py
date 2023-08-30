@@ -45,9 +45,21 @@ class AvailabilityInformationResponse(dict):
         :param str disabled_reason: Reason why the product is disabled.
         :param str disabled_reason_message: Message for why the product is disabled.
         """
-        pulumi.set(__self__, "availability_stage", availability_stage)
-        pulumi.set(__self__, "disabled_reason", disabled_reason)
-        pulumi.set(__self__, "disabled_reason_message", disabled_reason_message)
+        AvailabilityInformationResponse.__configure__(
+            availability_stage=availability_stage,
+            disabled_reason=disabled_reason,
+            disabled_reason_message=disabled_reason_message,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             availability_stage: str,
+             disabled_reason: str,
+             disabled_reason_message: str,
+             __setter=lambda key, value: ...):
+        __setter("availability_stage", availability_stage)
+        __setter("disabled_reason", disabled_reason)
+        __setter("disabled_reason_message", disabled_reason_message)
 
     @property
     @pulumi.getter(name="availabilityStage")
@@ -91,10 +103,24 @@ class BillingMeterDetailsResponse(dict):
         :param str metering_type: Represents Metering type (eg one-time or recurrent)
         :param str name: Represents Billing type name
         """
-        pulumi.set(__self__, "frequency", frequency)
-        pulumi.set(__self__, "meter_details", meter_details)
-        pulumi.set(__self__, "metering_type", metering_type)
-        pulumi.set(__self__, "name", name)
+        BillingMeterDetailsResponse.__configure__(
+            frequency=frequency,
+            meter_details=meter_details,
+            metering_type=metering_type,
+            name=name,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             frequency: str,
+             meter_details: Any,
+             metering_type: str,
+             name: str,
+             __setter=lambda key, value: ...):
+        __setter("frequency", frequency)
+        __setter("meter_details", meter_details)
+        __setter("metering_type", metering_type)
+        __setter("name", name)
 
     @property
     @pulumi.getter
@@ -156,15 +182,39 @@ class ConfigurationResponse(dict):
         :param Sequence['ImageInformationResponse'] image_information: Image information for the product system.
         :param Sequence['SpecificationResponse'] specifications: Specifications of the configuration
         """
-        pulumi.set(__self__, "availability_information", availability_information)
-        pulumi.set(__self__, "cost_information", cost_information)
-        pulumi.set(__self__, "description", description)
-        pulumi.set(__self__, "dimensions", dimensions)
-        pulumi.set(__self__, "display_name", display_name)
-        pulumi.set(__self__, "filterable_properties", filterable_properties)
-        pulumi.set(__self__, "hierarchy_information", hierarchy_information)
-        pulumi.set(__self__, "image_information", image_information)
-        pulumi.set(__self__, "specifications", specifications)
+        ConfigurationResponse.__configure__(
+            availability_information=availability_information,
+            cost_information=cost_information,
+            description=description,
+            dimensions=dimensions,
+            display_name=display_name,
+            filterable_properties=filterable_properties,
+            hierarchy_information=hierarchy_information,
+            image_information=image_information,
+            specifications=specifications,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             availability_information: 'outputs.AvailabilityInformationResponse',
+             cost_information: 'outputs.CostInformationResponse',
+             description: 'outputs.DescriptionResponse',
+             dimensions: 'outputs.DimensionsResponse',
+             display_name: str,
+             filterable_properties: Sequence['outputs.FilterablePropertyResponse'],
+             hierarchy_information: 'outputs.HierarchyInformationResponse',
+             image_information: Sequence['outputs.ImageInformationResponse'],
+             specifications: Sequence['outputs.SpecificationResponse'],
+             __setter=lambda key, value: ...):
+        __setter("availability_information", availability_information)
+        __setter("cost_information", cost_information)
+        __setter("description", description)
+        __setter("dimensions", dimensions)
+        __setter("display_name", display_name)
+        __setter("filterable_properties", filterable_properties)
+        __setter("hierarchy_information", hierarchy_information)
+        __setter("image_information", image_information)
+        __setter("specifications", specifications)
 
     @property
     @pulumi.getter(name="availabilityInformation")
@@ -252,8 +302,18 @@ class CostInformationResponse(dict):
         :param str billing_info_url: Default url to display billing information
         :param Sequence['BillingMeterDetailsResponse'] billing_meter_details: Details on the various billing aspects for the product system.
         """
-        pulumi.set(__self__, "billing_info_url", billing_info_url)
-        pulumi.set(__self__, "billing_meter_details", billing_meter_details)
+        CostInformationResponse.__configure__(
+            billing_info_url=billing_info_url,
+            billing_meter_details=billing_meter_details,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             billing_info_url: str,
+             billing_meter_details: Sequence['outputs.BillingMeterDetailsResponse'],
+             __setter=lambda key, value: ...):
+        __setter("billing_info_url", billing_info_url)
+        __setter("billing_meter_details", billing_meter_details)
 
     @property
     @pulumi.getter(name="billingInfoUrl")
@@ -293,12 +353,30 @@ class DescriptionResponse(dict):
         :param str long_description: Long description of the product system.
         :param str short_description: Short description of the product system.
         """
-        pulumi.set(__self__, "attributes", attributes)
-        pulumi.set(__self__, "description_type", description_type)
-        pulumi.set(__self__, "keywords", keywords)
-        pulumi.set(__self__, "links", links)
-        pulumi.set(__self__, "long_description", long_description)
-        pulumi.set(__self__, "short_description", short_description)
+        DescriptionResponse.__configure__(
+            attributes=attributes,
+            description_type=description_type,
+            keywords=keywords,
+            links=links,
+            long_description=long_description,
+            short_description=short_description,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             attributes: Sequence[str],
+             description_type: str,
+             keywords: Sequence[str],
+             links: Sequence['outputs.LinkResponse'],
+             long_description: str,
+             short_description: str,
+             __setter=lambda key, value: ...):
+        __setter("attributes", attributes)
+        __setter("description_type", description_type)
+        __setter("keywords", keywords)
+        __setter("links", links)
+        __setter("long_description", long_description)
+        __setter("short_description", short_description)
 
     @property
     @pulumi.getter
@@ -372,13 +450,33 @@ class DimensionsResponse(dict):
         :param str weight_unit: Unit for the dimensions of weight.
         :param float width: Width of the device.
         """
-        pulumi.set(__self__, "depth", depth)
-        pulumi.set(__self__, "height", height)
-        pulumi.set(__self__, "length", length)
-        pulumi.set(__self__, "length_height_unit", length_height_unit)
-        pulumi.set(__self__, "weight", weight)
-        pulumi.set(__self__, "weight_unit", weight_unit)
-        pulumi.set(__self__, "width", width)
+        DimensionsResponse.__configure__(
+            depth=depth,
+            height=height,
+            length=length,
+            length_height_unit=length_height_unit,
+            weight=weight,
+            weight_unit=weight_unit,
+            width=width,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             depth: float,
+             height: float,
+             length: float,
+             length_height_unit: str,
+             weight: float,
+             weight_unit: str,
+             width: float,
+             __setter=lambda key, value: ...):
+        __setter("depth", depth)
+        __setter("height", height)
+        __setter("length", length)
+        __setter("length_height_unit", length_height_unit)
+        __setter("weight", weight)
+        __setter("weight_unit", weight_unit)
+        __setter("width", width)
 
     @property
     @pulumi.getter
@@ -450,8 +548,18 @@ class FilterablePropertyResponse(dict):
         :param Sequence[str] supported_values: Values to be filtered.
         :param str type: Type of product filter.
         """
-        pulumi.set(__self__, "supported_values", supported_values)
-        pulumi.set(__self__, "type", type)
+        FilterablePropertyResponse.__configure__(
+            supported_values=supported_values,
+            type=type,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             supported_values: Sequence[str],
+             type: str,
+             __setter=lambda key, value: ...):
+        __setter("supported_values", supported_values)
+        __setter("type", type)
 
     @property
     @pulumi.getter(name="supportedValues")
@@ -487,14 +595,28 @@ class HierarchyInformationResponse(dict):
         :param str product_line_name: Represents product line name that uniquely identifies product line
         :param str product_name: Represents product name that uniquely identifies product
         """
+        HierarchyInformationResponse.__configure__(
+            configuration_name=configuration_name,
+            product_family_name=product_family_name,
+            product_line_name=product_line_name,
+            product_name=product_name,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             configuration_name: Optional[str] = None,
+             product_family_name: Optional[str] = None,
+             product_line_name: Optional[str] = None,
+             product_name: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if configuration_name is not None:
-            pulumi.set(__self__, "configuration_name", configuration_name)
+            __setter("configuration_name", configuration_name)
         if product_family_name is not None:
-            pulumi.set(__self__, "product_family_name", product_family_name)
+            __setter("product_family_name", product_family_name)
         if product_line_name is not None:
-            pulumi.set(__self__, "product_line_name", product_line_name)
+            __setter("product_line_name", product_line_name)
         if product_name is not None:
-            pulumi.set(__self__, "product_name", product_name)
+            __setter("product_name", product_name)
 
     @property
     @pulumi.getter(name="configurationName")
@@ -542,8 +664,18 @@ class ImageInformationResponse(dict):
         :param str image_type: Type of the image
         :param str image_url: Url of the image
         """
-        pulumi.set(__self__, "image_type", image_type)
-        pulumi.set(__self__, "image_url", image_url)
+        ImageInformationResponse.__configure__(
+            image_type=image_type,
+            image_url=image_url,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             image_type: str,
+             image_url: str,
+             __setter=lambda key, value: ...):
+        __setter("image_type", image_type)
+        __setter("image_url", image_url)
 
     @property
     @pulumi.getter(name="imageType")
@@ -575,8 +707,18 @@ class LinkResponse(dict):
         :param str link_type: Type of link
         :param str link_url: Url of the link
         """
-        pulumi.set(__self__, "link_type", link_type)
-        pulumi.set(__self__, "link_url", link_url)
+        LinkResponse.__configure__(
+            link_type=link_type,
+            link_url=link_url,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             link_type: str,
+             link_url: str,
+             __setter=lambda key, value: ...):
+        __setter("link_type", link_type)
+        __setter("link_url", link_url)
 
     @property
     @pulumi.getter(name="linkType")
@@ -613,10 +755,24 @@ class Pav2MeterDetailsResponse(dict):
         :param str meter_guid: Validation status of requested data center and transport.
         :param float multiplier: Billing unit applicable for Pav2 billing
         """
-        pulumi.set(__self__, "billing_type", 'Pav2')
-        pulumi.set(__self__, "charging_type", charging_type)
-        pulumi.set(__self__, "meter_guid", meter_guid)
-        pulumi.set(__self__, "multiplier", multiplier)
+        Pav2MeterDetailsResponse.__configure__(
+            billing_type=billing_type,
+            charging_type=charging_type,
+            meter_guid=meter_guid,
+            multiplier=multiplier,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             billing_type: str,
+             charging_type: str,
+             meter_guid: str,
+             multiplier: float,
+             __setter=lambda key, value: ...):
+        __setter("billing_type", 'Pav2')
+        __setter("charging_type", charging_type)
+        __setter("meter_guid", meter_guid)
+        __setter("multiplier", multiplier)
 
     @property
     @pulumi.getter(name="billingType")
@@ -677,14 +833,36 @@ class ProductFamilyResponse(dict):
         :param Sequence['ImageInformationResponse'] image_information: Image information for the product system.
         :param Sequence['ProductLineResponse'] product_lines: List of product lines supported in the product family
         """
-        pulumi.set(__self__, "availability_information", availability_information)
-        pulumi.set(__self__, "cost_information", cost_information)
-        pulumi.set(__self__, "description", description)
-        pulumi.set(__self__, "display_name", display_name)
-        pulumi.set(__self__, "filterable_properties", filterable_properties)
-        pulumi.set(__self__, "hierarchy_information", hierarchy_information)
-        pulumi.set(__self__, "image_information", image_information)
-        pulumi.set(__self__, "product_lines", product_lines)
+        ProductFamilyResponse.__configure__(
+            availability_information=availability_information,
+            cost_information=cost_information,
+            description=description,
+            display_name=display_name,
+            filterable_properties=filterable_properties,
+            hierarchy_information=hierarchy_information,
+            image_information=image_information,
+            product_lines=product_lines,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             availability_information: 'outputs.AvailabilityInformationResponse',
+             cost_information: 'outputs.CostInformationResponse',
+             description: 'outputs.DescriptionResponse',
+             display_name: str,
+             filterable_properties: Sequence['outputs.FilterablePropertyResponse'],
+             hierarchy_information: 'outputs.HierarchyInformationResponse',
+             image_information: Sequence['outputs.ImageInformationResponse'],
+             product_lines: Sequence['outputs.ProductLineResponse'],
+             __setter=lambda key, value: ...):
+        __setter("availability_information", availability_information)
+        __setter("cost_information", cost_information)
+        __setter("description", description)
+        __setter("display_name", display_name)
+        __setter("filterable_properties", filterable_properties)
+        __setter("hierarchy_information", hierarchy_information)
+        __setter("image_information", image_information)
+        __setter("product_lines", product_lines)
 
     @property
     @pulumi.getter(name="availabilityInformation")
@@ -776,14 +954,36 @@ class ProductLineResponse(dict):
         :param Sequence['ImageInformationResponse'] image_information: Image information for the product system.
         :param Sequence['ProductResponse'] products: List of products in the product line
         """
-        pulumi.set(__self__, "availability_information", availability_information)
-        pulumi.set(__self__, "cost_information", cost_information)
-        pulumi.set(__self__, "description", description)
-        pulumi.set(__self__, "display_name", display_name)
-        pulumi.set(__self__, "filterable_properties", filterable_properties)
-        pulumi.set(__self__, "hierarchy_information", hierarchy_information)
-        pulumi.set(__self__, "image_information", image_information)
-        pulumi.set(__self__, "products", products)
+        ProductLineResponse.__configure__(
+            availability_information=availability_information,
+            cost_information=cost_information,
+            description=description,
+            display_name=display_name,
+            filterable_properties=filterable_properties,
+            hierarchy_information=hierarchy_information,
+            image_information=image_information,
+            products=products,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             availability_information: 'outputs.AvailabilityInformationResponse',
+             cost_information: 'outputs.CostInformationResponse',
+             description: 'outputs.DescriptionResponse',
+             display_name: str,
+             filterable_properties: Sequence['outputs.FilterablePropertyResponse'],
+             hierarchy_information: 'outputs.HierarchyInformationResponse',
+             image_information: Sequence['outputs.ImageInformationResponse'],
+             products: Sequence['outputs.ProductResponse'],
+             __setter=lambda key, value: ...):
+        __setter("availability_information", availability_information)
+        __setter("cost_information", cost_information)
+        __setter("description", description)
+        __setter("display_name", display_name)
+        __setter("filterable_properties", filterable_properties)
+        __setter("hierarchy_information", hierarchy_information)
+        __setter("image_information", image_information)
+        __setter("products", products)
 
     @property
     @pulumi.getter(name="availabilityInformation")
@@ -875,14 +1075,36 @@ class ProductResponse(dict):
         :param 'HierarchyInformationResponse' hierarchy_information: Hierarchy information of a product.
         :param Sequence['ImageInformationResponse'] image_information: Image information for the product system.
         """
-        pulumi.set(__self__, "availability_information", availability_information)
-        pulumi.set(__self__, "configurations", configurations)
-        pulumi.set(__self__, "cost_information", cost_information)
-        pulumi.set(__self__, "description", description)
-        pulumi.set(__self__, "display_name", display_name)
-        pulumi.set(__self__, "filterable_properties", filterable_properties)
-        pulumi.set(__self__, "hierarchy_information", hierarchy_information)
-        pulumi.set(__self__, "image_information", image_information)
+        ProductResponse.__configure__(
+            availability_information=availability_information,
+            configurations=configurations,
+            cost_information=cost_information,
+            description=description,
+            display_name=display_name,
+            filterable_properties=filterable_properties,
+            hierarchy_information=hierarchy_information,
+            image_information=image_information,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             availability_information: 'outputs.AvailabilityInformationResponse',
+             configurations: Sequence['outputs.ConfigurationResponse'],
+             cost_information: 'outputs.CostInformationResponse',
+             description: 'outputs.DescriptionResponse',
+             display_name: str,
+             filterable_properties: Sequence['outputs.FilterablePropertyResponse'],
+             hierarchy_information: 'outputs.HierarchyInformationResponse',
+             image_information: Sequence['outputs.ImageInformationResponse'],
+             __setter=lambda key, value: ...):
+        __setter("availability_information", availability_information)
+        __setter("configurations", configurations)
+        __setter("cost_information", cost_information)
+        __setter("description", description)
+        __setter("display_name", display_name)
+        __setter("filterable_properties", filterable_properties)
+        __setter("hierarchy_information", hierarchy_information)
+        __setter("image_information", image_information)
 
     @property
     @pulumi.getter(name="availabilityInformation")
@@ -971,12 +1193,30 @@ class PurchaseMeterDetailsResponse(dict):
         :param str sku_id: Sku Id
         :param str term_id: Term Id
         """
-        pulumi.set(__self__, "billing_type", 'Purchase')
-        pulumi.set(__self__, "charging_type", charging_type)
-        pulumi.set(__self__, "multiplier", multiplier)
-        pulumi.set(__self__, "product_id", product_id)
-        pulumi.set(__self__, "sku_id", sku_id)
-        pulumi.set(__self__, "term_id", term_id)
+        PurchaseMeterDetailsResponse.__configure__(
+            billing_type=billing_type,
+            charging_type=charging_type,
+            multiplier=multiplier,
+            product_id=product_id,
+            sku_id=sku_id,
+            term_id=term_id,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             billing_type: str,
+             charging_type: str,
+             multiplier: float,
+             product_id: str,
+             sku_id: str,
+             term_id: str,
+             __setter=lambda key, value: ...):
+        __setter("billing_type", 'Purchase')
+        __setter("charging_type", charging_type)
+        __setter("multiplier", multiplier)
+        __setter("product_id", product_id)
+        __setter("sku_id", sku_id)
+        __setter("term_id", term_id)
 
     @property
     @pulumi.getter(name="billingType")
@@ -1041,8 +1281,18 @@ class SpecificationResponse(dict):
         :param str name: Name of the specification
         :param str value: Value of the specification
         """
-        pulumi.set(__self__, "name", name)
-        pulumi.set(__self__, "value", value)
+        SpecificationResponse.__configure__(
+            name=name,
+            value=value,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             name: str,
+             value: str,
+             __setter=lambda key, value: ...):
+        __setter("name", name)
+        __setter("value", value)
 
     @property
     @pulumi.getter

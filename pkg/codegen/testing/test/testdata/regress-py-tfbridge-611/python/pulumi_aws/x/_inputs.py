@@ -17,8 +17,16 @@ __all__ = [
 class GetPolicyDocumentStatementArgs:
     def __init__(__self__, *,
                  actions: Optional[Sequence[str]] = None):
+        GetPolicyDocumentStatementArgs.__configure__(
+            actions=actions,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             actions: Optional[Sequence[str]] = None,
+             __setter=lambda key, value: ...):
         if actions is not None:
-            pulumi.set(__self__, "actions", actions)
+            __setter("actions", actions)
 
     @property
     @pulumi.getter

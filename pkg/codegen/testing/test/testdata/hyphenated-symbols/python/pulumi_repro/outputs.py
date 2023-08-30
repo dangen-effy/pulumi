@@ -34,8 +34,16 @@ class Bar(dict):
 
     def __init__(__self__, *,
                  has_a_hyphen: Optional[str] = None):
+        Bar.__configure__(
+            has_a_hyphen=has_a_hyphen,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             has_a_hyphen: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if has_a_hyphen is not None:
-            pulumi.set(__self__, "has_a_hyphen", has_a_hyphen)
+            __setter("has_a_hyphen", has_a_hyphen)
 
     @property
     @pulumi.getter(name="has-a-hyphen")

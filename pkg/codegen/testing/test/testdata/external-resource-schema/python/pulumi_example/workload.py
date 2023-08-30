@@ -19,6 +19,10 @@ class WorkloadArgs:
         The set of arguments for constructing a Workload resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Workload(pulumi.CustomResource):

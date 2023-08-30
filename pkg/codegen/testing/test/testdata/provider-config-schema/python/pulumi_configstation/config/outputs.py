@@ -18,10 +18,20 @@ class Sandwich(dict):
     def __init__(__self__, *,
                  bread: Optional[str] = None,
                  veggies: Optional[Sequence[str]] = None):
+        Sandwich.__configure__(
+            bread=bread,
+            veggies=veggies,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             bread: Optional[str] = None,
+             veggies: Optional[Sequence[str]] = None,
+             __setter=lambda key, value: ...):
         if bread is not None:
-            pulumi.set(__self__, "bread", bread)
+            __setter("bread", bread)
         if veggies is not None:
-            pulumi.set(__self__, "veggies", veggies)
+            __setter("veggies", veggies)
 
     @property
     @pulumi.getter

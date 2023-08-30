@@ -38,14 +38,28 @@ class SsisEnvironmentReferenceResponse(dict):
         :param float id: Environment reference id.
         :param str reference_type: Reference type
         """
+        SsisEnvironmentReferenceResponse.__configure__(
+            environment_folder_name=environment_folder_name,
+            environment_name=environment_name,
+            id=id,
+            reference_type=reference_type,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             environment_folder_name: Optional[str] = None,
+             environment_name: Optional[str] = None,
+             id: Optional[float] = None,
+             reference_type: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if environment_folder_name is not None:
-            pulumi.set(__self__, "environment_folder_name", environment_folder_name)
+            __setter("environment_folder_name", environment_folder_name)
         if environment_name is not None:
-            pulumi.set(__self__, "environment_name", environment_name)
+            __setter("environment_name", environment_name)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if reference_type is not None:
-            pulumi.set(__self__, "reference_type", reference_type)
+            __setter("reference_type", reference_type)
 
     @property
     @pulumi.getter(name="environmentFolderName")
@@ -102,17 +116,35 @@ class SsisEnvironmentResponse(dict):
         :param str name: Metadata name.
         :param Sequence['SsisVariableResponse'] variables: Variable in environment
         """
-        pulumi.set(__self__, "type", 'Environment')
+        SsisEnvironmentResponse.__configure__(
+            type=type,
+            description=description,
+            folder_id=folder_id,
+            id=id,
+            name=name,
+            variables=variables,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             type: str,
+             description: Optional[str] = None,
+             folder_id: Optional[float] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             variables: Optional[Sequence['outputs.SsisVariableResponse']] = None,
+             __setter=lambda key, value: ...):
+        __setter("type", 'Environment')
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if folder_id is not None:
-            pulumi.set(__self__, "folder_id", folder_id)
+            __setter("folder_id", folder_id)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if variables is not None:
-            pulumi.set(__self__, "variables", variables)
+            __setter("variables", variables)
 
     @property
     @pulumi.getter
@@ -182,13 +214,27 @@ class SsisFolderResponse(dict):
         :param float id: Metadata id.
         :param str name: Metadata name.
         """
-        pulumi.set(__self__, "type", 'Folder')
+        SsisFolderResponse.__configure__(
+            type=type,
+            description=description,
+            id=id,
+            name=name,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             type: str,
+             description: Optional[str] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             __setter=lambda key, value: ...):
+        __setter("type", 'Folder')
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
 
     @property
     @pulumi.getter
@@ -250,21 +296,43 @@ class SsisPackageResponse(dict):
         :param float project_id: Project id which contains package.
         :param float project_version: Project version which contains package.
         """
-        pulumi.set(__self__, "type", 'Package')
+        SsisPackageResponse.__configure__(
+            type=type,
+            description=description,
+            folder_id=folder_id,
+            id=id,
+            name=name,
+            parameters=parameters,
+            project_id=project_id,
+            project_version=project_version,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             type: str,
+             description: Optional[str] = None,
+             folder_id: Optional[float] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             parameters: Optional[Sequence['outputs.SsisParameterResponse']] = None,
+             project_id: Optional[float] = None,
+             project_version: Optional[float] = None,
+             __setter=lambda key, value: ...):
+        __setter("type", 'Package')
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if folder_id is not None:
-            pulumi.set(__self__, "folder_id", folder_id)
+            __setter("folder_id", folder_id)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if parameters is not None:
-            pulumi.set(__self__, "parameters", parameters)
+            __setter("parameters", parameters)
         if project_id is not None:
-            pulumi.set(__self__, "project_id", project_id)
+            __setter("project_id", project_id)
         if project_version is not None:
-            pulumi.set(__self__, "project_version", project_version)
+            __setter("project_version", project_version)
 
     @property
     @pulumi.getter
@@ -365,30 +433,60 @@ class SsisParameterResponse(dict):
         :param str value_type: Parameter value type.
         :param str variable: Parameter reference variable.
         """
+        SsisParameterResponse.__configure__(
+            data_type=data_type,
+            default_value=default_value,
+            description=description,
+            design_default_value=design_default_value,
+            id=id,
+            name=name,
+            required=required,
+            sensitive=sensitive,
+            sensitive_default_value=sensitive_default_value,
+            value_set=value_set,
+            value_type=value_type,
+            variable=variable,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             data_type: Optional[str] = None,
+             default_value: Optional[str] = None,
+             description: Optional[str] = None,
+             design_default_value: Optional[str] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             required: Optional[bool] = None,
+             sensitive: Optional[bool] = None,
+             sensitive_default_value: Optional[str] = None,
+             value_set: Optional[bool] = None,
+             value_type: Optional[str] = None,
+             variable: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if data_type is not None:
-            pulumi.set(__self__, "data_type", data_type)
+            __setter("data_type", data_type)
         if default_value is not None:
-            pulumi.set(__self__, "default_value", default_value)
+            __setter("default_value", default_value)
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if design_default_value is not None:
-            pulumi.set(__self__, "design_default_value", design_default_value)
+            __setter("design_default_value", design_default_value)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if required is not None:
-            pulumi.set(__self__, "required", required)
+            __setter("required", required)
         if sensitive is not None:
-            pulumi.set(__self__, "sensitive", sensitive)
+            __setter("sensitive", sensitive)
         if sensitive_default_value is not None:
-            pulumi.set(__self__, "sensitive_default_value", sensitive_default_value)
+            __setter("sensitive_default_value", sensitive_default_value)
         if value_set is not None:
-            pulumi.set(__self__, "value_set", value_set)
+            __setter("value_set", value_set)
         if value_type is not None:
-            pulumi.set(__self__, "value_type", value_type)
+            __setter("value_type", value_type)
         if variable is not None:
-            pulumi.set(__self__, "variable", variable)
+            __setter("variable", variable)
 
     @property
     @pulumi.getter(name="dataType")
@@ -513,21 +611,43 @@ class SsisProjectResponse(dict):
         :param Sequence['SsisParameterResponse'] parameters: Parameters in project
         :param float version: Project version.
         """
-        pulumi.set(__self__, "type", 'Project')
+        SsisProjectResponse.__configure__(
+            type=type,
+            description=description,
+            environment_refs=environment_refs,
+            folder_id=folder_id,
+            id=id,
+            name=name,
+            parameters=parameters,
+            version=version,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             type: str,
+             description: Optional[str] = None,
+             environment_refs: Optional[Sequence['outputs.SsisEnvironmentReferenceResponse']] = None,
+             folder_id: Optional[float] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             parameters: Optional[Sequence['outputs.SsisParameterResponse']] = None,
+             version: Optional[float] = None,
+             __setter=lambda key, value: ...):
+        __setter("type", 'Project')
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if environment_refs is not None:
-            pulumi.set(__self__, "environment_refs", environment_refs)
+            __setter("environment_refs", environment_refs)
         if folder_id is not None:
-            pulumi.set(__self__, "folder_id", folder_id)
+            __setter("folder_id", folder_id)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if parameters is not None:
-            pulumi.set(__self__, "parameters", parameters)
+            __setter("parameters", parameters)
         if version is not None:
-            pulumi.set(__self__, "version", version)
+            __setter("version", version)
 
     @property
     @pulumi.getter
@@ -618,20 +738,40 @@ class SsisVariableResponse(dict):
         :param str sensitive_value: Variable sensitive value.
         :param str value: Variable value.
         """
+        SsisVariableResponse.__configure__(
+            data_type=data_type,
+            description=description,
+            id=id,
+            name=name,
+            sensitive=sensitive,
+            sensitive_value=sensitive_value,
+            value=value,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             data_type: Optional[str] = None,
+             description: Optional[str] = None,
+             id: Optional[float] = None,
+             name: Optional[str] = None,
+             sensitive: Optional[bool] = None,
+             sensitive_value: Optional[str] = None,
+             value: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if data_type is not None:
-            pulumi.set(__self__, "data_type", data_type)
+            __setter("data_type", data_type)
         if description is not None:
-            pulumi.set(__self__, "description", description)
+            __setter("description", description)
         if id is not None:
-            pulumi.set(__self__, "id", id)
+            __setter("id", id)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if sensitive is not None:
-            pulumi.set(__self__, "sensitive", sensitive)
+            __setter("sensitive", sensitive)
         if sensitive_value is not None:
-            pulumi.set(__self__, "sensitive_value", sensitive_value)
+            __setter("sensitive_value", sensitive_value)
         if value is not None:
-            pulumi.set(__self__, "value", value)
+            __setter("value", value)
 
     @property
     @pulumi.getter(name="dataType")
@@ -707,10 +847,24 @@ class StorageAccountKeyResponse(dict):
         :param str permissions: Permissions for the key -- read-only or full permissions.
         :param str value: Base 64-encoded value of the key.
         """
-        pulumi.set(__self__, "creation_time", creation_time)
-        pulumi.set(__self__, "key_name", key_name)
-        pulumi.set(__self__, "permissions", permissions)
-        pulumi.set(__self__, "value", value)
+        StorageAccountKeyResponse.__configure__(
+            creation_time=creation_time,
+            key_name=key_name,
+            permissions=permissions,
+            value=value,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             creation_time: str,
+             key_name: str,
+             permissions: str,
+             value: str,
+             __setter=lambda key, value: ...):
+        __setter("creation_time", creation_time)
+        __setter("key_name", key_name)
+        __setter("permissions", permissions)
+        __setter("value", value)
 
     @property
     @pulumi.getter(name="creationTime")

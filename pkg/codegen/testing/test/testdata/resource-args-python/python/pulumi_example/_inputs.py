@@ -17,8 +17,16 @@ __all__ = [
 class PetArgs:
     def __init__(__self__, *,
                  name: Optional[pulumi.Input[str]] = None):
+        PetArgs.__configure__(
+            name=name,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             name: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
 
     @property
     @pulumi.getter

@@ -17,8 +17,16 @@ __all__ = [
 class ConfigArgs:
     def __init__(__self__, *,
                  foo: Optional[pulumi.Input[str]] = None):
+        ConfigArgs.__configure__(
+            foo=foo,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             foo: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
 
     @property
     @pulumi.getter

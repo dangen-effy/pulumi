@@ -20,8 +20,16 @@ class ModuleResourceArgs:
         """
         The set of arguments for constructing a ModuleResource resource.
         """
+        ModuleResourceArgs.__configure__(
+            thing=thing,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             thing: Optional[pulumi.Input['_root_inputs.TopLevelArgs']] = None,
+             __setter=lambda key, value: ...):
         if thing is not None:
-            pulumi.set(__self__, "thing", thing)
+            __setter("thing", thing)
 
     @property
     @pulumi.getter
@@ -78,6 +86,10 @@ class ModuleResource(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ModuleResourceArgs.__new__(ModuleResourceArgs)
 
+            if isinstance(thing, dict):
+                def __setter(key, value):
+                    thing[key] = value
+                _root_inputs.TopLevelArgs.__configure__(**thing, __setter=__setter)
             __props__.__dict__["thing"] = thing
         super(ModuleResource, __self__).__init__(
             'foo-bar:submodule1:ModuleResource',

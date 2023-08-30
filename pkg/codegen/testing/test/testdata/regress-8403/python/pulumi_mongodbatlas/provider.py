@@ -18,6 +18,10 @@ class ProviderArgs:
         The set of arguments for constructing a Provider resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Provider(pulumi.ProviderResource):

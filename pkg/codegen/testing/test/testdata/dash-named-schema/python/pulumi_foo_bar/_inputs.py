@@ -17,8 +17,16 @@ __all__ = [
 class TopLevelArgs:
     def __init__(__self__, *,
                  buzz: Optional[pulumi.Input[str]] = None):
+        TopLevelArgs.__configure__(
+            buzz=buzz,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             buzz: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if buzz is not None:
-            pulumi.set(__self__, "buzz", buzz)
+            __setter("buzz", buzz)
 
     @property
     @pulumi.getter

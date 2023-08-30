@@ -21,6 +21,10 @@ class ToyStoreArgs:
         The set of arguments for constructing a ToyStore resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class ToyStore(pulumi.CustomResource):

@@ -25,10 +25,20 @@ class CompositePathResponse(dict):
         :param str order: Sort order for composite paths.
         :param str path: The path for which the indexing behavior applies to. Index paths typically start with root and end with wildcard (/path/*)
         """
+        CompositePathResponse.__configure__(
+            order=order,
+            path=path,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             order: Optional[str] = None,
+             path: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if order is not None:
-            pulumi.set(__self__, "order", order)
+            __setter("order", order)
         if path is not None:
-            pulumi.set(__self__, "path", path)
+            __setter("path", path)
 
     @property
     @pulumi.getter
@@ -75,8 +85,16 @@ class IndexingPolicyResponse(dict):
         Cosmos DB indexing policy
         :param Sequence[Sequence['CompositePathResponse']] composite_indexes: List of composite path list
         """
+        IndexingPolicyResponse.__configure__(
+            composite_indexes=composite_indexes,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             composite_indexes: Optional[Sequence[Sequence['outputs.CompositePathResponse']]] = None,
+             __setter=lambda key, value: ...):
         if composite_indexes is not None:
-            pulumi.set(__self__, "composite_indexes", composite_indexes)
+            __setter("composite_indexes", composite_indexes)
 
     @property
     @pulumi.getter(name="compositeIndexes")
@@ -111,8 +129,16 @@ class SqlContainerGetPropertiesResponseResource(dict):
         """
         :param 'IndexingPolicyResponse' indexing_policy: The configuration of the indexing policy. By default, the indexing is automatic for all document paths within the container
         """
+        SqlContainerGetPropertiesResponseResource.__configure__(
+            indexing_policy=indexing_policy,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             indexing_policy: Optional['outputs.IndexingPolicyResponse'] = None,
+             __setter=lambda key, value: ...):
         if indexing_policy is not None:
-            pulumi.set(__self__, "indexing_policy", indexing_policy)
+            __setter("indexing_policy", indexing_policy)
 
     @property
     @pulumi.getter(name="indexingPolicy")

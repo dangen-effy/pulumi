@@ -18,10 +18,20 @@ class ENIConfigSpecArgs:
     def __init__(__self__, *,
                  security_groups: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
                  subnet: Optional[pulumi.Input[str]] = None):
+        ENIConfigSpecArgs.__configure__(
+            security_groups=security_groups,
+            subnet=subnet,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             security_groups: Optional[pulumi.Input[Sequence[pulumi.Input[str]]]] = None,
+             subnet: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if security_groups is not None:
-            pulumi.set(__self__, "security_groups", security_groups)
+            __setter("security_groups", security_groups)
         if subnet is not None:
-            pulumi.set(__self__, "subnet", subnet)
+            __setter("subnet", subnet)
 
     @property
     @pulumi.getter(name="securityGroups")

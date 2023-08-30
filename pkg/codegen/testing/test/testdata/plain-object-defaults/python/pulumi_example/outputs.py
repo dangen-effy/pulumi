@@ -45,16 +45,28 @@ class KubeClientSettings(dict):
         :param int burst: Maximum burst for throttle. Default value is 10.
         :param float qps: Maximum queries per second (QPS) to the API server from this client. Default value is 5.
         """
+        KubeClientSettings.__configure__(
+            burst=burst,
+            qps=qps,
+            rec_test=rec_test,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             burst: Optional[int] = None,
+             qps: Optional[float] = None,
+             rec_test: Optional['outputs.KubeClientSettings'] = None,
+             __setter=lambda key, value: ...):
         if burst is None:
             burst = _utilities.get_env_int('PULUMI_K8S_CLIENT_BURST')
         if burst is not None:
-            pulumi.set(__self__, "burst", burst)
+            __setter("burst", burst)
         if qps is None:
             qps = _utilities.get_env_float('PULUMI_K8S_CLIENT_QPS')
         if qps is not None:
-            pulumi.set(__self__, "qps", qps)
+            __setter("qps", qps)
         if rec_test is not None:
-            pulumi.set(__self__, "rec_test", rec_test)
+            __setter("rec_test", rec_test)
 
     @property
     @pulumi.getter

@@ -22,8 +22,16 @@ __all__ = [
 class ConfigMapArgs:
     def __init__(__self__, *,
                  config: Optional[pulumi.Input[str]] = None):
+        ConfigMapArgs.__configure__(
+            config=config,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             config: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if config is not None:
-            pulumi.set(__self__, "config", config)
+            __setter("config", config)
 
     @property
     @pulumi.getter
@@ -40,9 +48,19 @@ class ObjectWithNodeOptionalInputsArgs:
     def __init__(__self__, *,
                  foo: pulumi.Input[str],
                  bar: Optional[pulumi.Input[int]] = None):
-        pulumi.set(__self__, "foo", foo)
+        ObjectWithNodeOptionalInputsArgs.__configure__(
+            foo=foo,
+            bar=bar,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             foo: pulumi.Input[str],
+             bar: Optional[pulumi.Input[int]] = None,
+             __setter=lambda key, value: ...):
+        __setter("foo", foo)
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
 
     @property
     @pulumi.getter
@@ -75,16 +93,32 @@ class ObjectArgs:
         :param pulumi.Input[Sequence[pulumi.Input[Sequence[pulumi.Input['SomeOtherObjectArgs']]]]] others: List of lists of other objects
         :param pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input['SomeOtherObjectArgs']]]]] still_others: Mapping from string to list of some other object
         """
+        ObjectArgs.__configure__(
+            bar=bar,
+            configs=configs,
+            foo=foo,
+            others=others,
+            still_others=still_others,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             bar: Optional[pulumi.Input[str]] = None,
+             configs: Optional[pulumi.Input[Sequence[pulumi.Input['ConfigMapArgs']]]] = None,
+             foo: Optional[pulumi.Input['Resource']] = None,
+             others: Optional[pulumi.Input[Sequence[pulumi.Input[Sequence[pulumi.Input['SomeOtherObjectArgs']]]]]] = None,
+             still_others: Optional[pulumi.Input[Mapping[str, pulumi.Input[Sequence[pulumi.Input['SomeOtherObjectArgs']]]]]] = None,
+             __setter=lambda key, value: ...):
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
         if configs is not None:
-            pulumi.set(__self__, "configs", configs)
+            __setter("configs", configs)
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
         if others is not None:
-            pulumi.set(__self__, "others", others)
+            __setter("others", others)
         if still_others is not None:
-            pulumi.set(__self__, "still_others", still_others)
+            __setter("still_others", still_others)
 
     @property
     @pulumi.getter
@@ -142,8 +176,16 @@ class ObjectArgs:
 class SomeOtherObjectArgs:
     def __init__(__self__, *,
                  baz: Optional[pulumi.Input[str]] = None):
+        SomeOtherObjectArgs.__configure__(
+            baz=baz,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             baz: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if baz is not None:
-            pulumi.set(__self__, "baz", baz)
+            __setter("baz", baz)
 
     @property
     @pulumi.getter

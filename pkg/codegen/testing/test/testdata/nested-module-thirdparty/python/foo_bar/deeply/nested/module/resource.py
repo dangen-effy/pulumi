@@ -18,8 +18,16 @@ class ResourceArgs:
         """
         The set of arguments for constructing a Resource resource.
         """
+        ResourceArgs.__configure__(
+            baz=baz,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             baz: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if baz is not None:
-            pulumi.set(__self__, "baz", baz)
+            __setter("baz", baz)
 
     @property
     @pulumi.getter

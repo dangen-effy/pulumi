@@ -38,8 +38,16 @@ class NodePoolAutoscaling(dict):
         """
         :param 'pulumi_google_native.container.v1.NodePoolAutoscalingLocationPolicy' location_policy: Location policy used when scaling up a nodepool.
         """
+        NodePoolAutoscaling.__configure__(
+            location_policy=location_policy,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             location_policy: Optional['pulumi_google_native.container.v1.NodePoolAutoscalingLocationPolicy'] = None,
+             __setter=lambda key, value: ...):
         if location_policy is not None:
-            pulumi.set(__self__, "location_policy", location_policy)
+            __setter("location_policy", location_policy)
 
     @property
     @pulumi.getter(name="locationPolicy")

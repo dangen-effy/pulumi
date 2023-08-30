@@ -21,10 +21,20 @@ class PersonArgs:
         """
         The set of arguments for constructing a Person resource.
         """
+        PersonArgs.__configure__(
+            name=name,
+            pets=pets,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             name: Optional[pulumi.Input[str]] = None,
+             pets: Optional[pulumi.Input[Sequence[pulumi.Input['PetArgs']]]] = None,
+             __setter=lambda key, value: ...):
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
         if pets is not None:
-            pulumi.set(__self__, "pets", pets)
+            __setter("pets", pets)
 
     @property
     @pulumi.getter

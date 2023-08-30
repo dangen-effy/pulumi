@@ -21,10 +21,20 @@ class ComponentArgs:
         """
         The set of arguments for constructing a Component resource.
         """
+        ComponentArgs.__configure__(
+            local=local,
+            main=main,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             local: Optional[pulumi.Input['Component2']] = None,
+             main: Optional[pulumi.Input['MainComponent']] = None,
+             __setter=lambda key, value: ...):
         if local is not None:
-            pulumi.set(__self__, "local", local)
+            __setter("local", local)
         if main is not None:
-            pulumi.set(__self__, "main", main)
+            __setter("main", main)
 
     @property
     @pulumi.getter

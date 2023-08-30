@@ -26,34 +26,50 @@ class RubberTreeArgs:
         """
         The set of arguments for constructing a RubberTree resource.
         """
+        RubberTreeArgs.__configure__(
+            diameter=diameter,
+            type=type,
+            container=container,
+            farm=farm,
+            size=size,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             diameter: pulumi.Input['Diameter'],
+             type: pulumi.Input['RubberTreeVariety'],
+             container: Optional[pulumi.Input['_root_inputs.ContainerArgs']] = None,
+             farm: Optional[pulumi.Input[Union['Farm', str]]] = None,
+             size: Optional[pulumi.Input['TreeSize']] = None,
+             __setter=lambda key, value: ...):
         if diameter is None:
             diameter = 6
         if diameter is not None:
             warnings.warn("""Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""", DeprecationWarning)
             pulumi.log.warn("""diameter is deprecated: Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""")
-        pulumi.set(__self__, "diameter", diameter)
+        __setter("diameter", diameter)
         if type is None:
             type = 'Burgundy'
         if type is not None:
             warnings.warn("""Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""", DeprecationWarning)
             pulumi.log.warn("""type is deprecated: Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""")
-        pulumi.set(__self__, "type", type)
+        __setter("type", type)
         if container is not None:
-            pulumi.set(__self__, "container", container)
+            __setter("container", container)
         if farm is None:
             farm = '(unknown)'
         if farm is not None:
             warnings.warn("""Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""", DeprecationWarning)
             pulumi.log.warn("""farm is deprecated: Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""")
         if farm is not None:
-            pulumi.set(__self__, "farm", farm)
+            __setter("farm", farm)
         if size is None:
             size = 'medium'
         if size is not None:
             warnings.warn("""Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""", DeprecationWarning)
             pulumi.log.warn("""size is deprecated: Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""")
         if size is not None:
-            pulumi.set(__self__, "size", size)
+            __setter("size", size)
 
     @property
     @pulumi.getter
@@ -120,10 +136,18 @@ class _RubberTreeState:
         """
         Input properties used for looking up and filtering RubberTree resources.
         """
+        _RubberTreeState.__configure__(
+            farm=farm,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             farm: Optional[pulumi.Input[Union['Farm', str]]] = None,
+             __setter=lambda key, value: ...):
         if farm is None:
             farm = '(unknown)'
         if farm is not None:
-            pulumi.set(__self__, "farm", farm)
+            __setter("farm", farm)
 
     @property
     @pulumi.getter
@@ -188,6 +212,10 @@ class RubberTree(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = RubberTreeArgs.__new__(RubberTreeArgs)
 
+            if isinstance(container, dict):
+                def __setter(key, value):
+                    container[key] = value
+                _root_inputs.ContainerArgs.__configure__(**container, __setter=__setter)
             __props__.__dict__["container"] = container
             if diameter is not None and not opts.urn:
                 warnings.warn("""Dear future maintainer, if there are changes here, make sure that this is printed before the value is set to the default or else this will always print.""", DeprecationWarning)

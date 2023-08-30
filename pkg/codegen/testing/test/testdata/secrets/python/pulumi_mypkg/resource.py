@@ -25,12 +25,30 @@ class ResourceArgs:
         """
         The set of arguments for constructing a Resource resource.
         """
-        pulumi.set(__self__, "config", config)
-        pulumi.set(__self__, "config_array", config_array)
-        pulumi.set(__self__, "config_map", config_map)
-        pulumi.set(__self__, "foo", foo)
-        pulumi.set(__self__, "foo_array", foo_array)
-        pulumi.set(__self__, "foo_map", foo_map)
+        ResourceArgs.__configure__(
+            config=config,
+            config_array=config_array,
+            config_map=config_map,
+            foo=foo,
+            foo_array=foo_array,
+            foo_map=foo_map,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             config: pulumi.Input['ConfigArgs'],
+             config_array: pulumi.Input[Sequence[pulumi.Input['ConfigArgs']]],
+             config_map: pulumi.Input[Mapping[str, pulumi.Input['ConfigArgs']]],
+             foo: pulumi.Input[str],
+             foo_array: pulumi.Input[Sequence[pulumi.Input[str]]],
+             foo_map: pulumi.Input[Mapping[str, pulumi.Input[str]]],
+             __setter=lambda key, value: ...):
+        __setter("config", config)
+        __setter("config_array", config_array)
+        __setter("config_map", config_map)
+        __setter("foo", foo)
+        __setter("foo_array", foo_array)
+        __setter("foo_map", foo_map)
 
     @property
     @pulumi.getter
@@ -142,6 +160,10 @@ class Resource(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ResourceArgs.__new__(ResourceArgs)
 
+            if isinstance(config, dict):
+                def __setter(key, value):
+                    config[key] = value
+                ConfigArgs.__configure__(**config, __setter=__setter)
             if config is None and not opts.urn:
                 raise TypeError("Missing required property 'config'")
             __props__.__dict__["config"] = None if config is None else pulumi.Output.secret(config)

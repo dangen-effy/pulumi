@@ -18,6 +18,10 @@ class DogArgs:
         The set of arguments for constructing a Dog resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Dog(pulumi.CustomResource):

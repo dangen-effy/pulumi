@@ -18,8 +18,18 @@ class GetAmiIdsFilterArgs:
     def __init__(__self__, *,
                  name: str,
                  values: Sequence[str]):
-        pulumi.set(__self__, "name", name)
-        pulumi.set(__self__, "values", values)
+        GetAmiIdsFilterArgs.__configure__(
+            name=name,
+            values=values,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             name: str,
+             values: Sequence[str],
+             __setter=lambda key, value: ...):
+        __setter("name", name)
+        __setter("values", values)
 
     @property
     @pulumi.getter

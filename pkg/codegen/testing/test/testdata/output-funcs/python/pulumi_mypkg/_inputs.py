@@ -21,7 +21,15 @@ class BastionShareableLink:
         Bastion Shareable Link.
         :param str vm: Reference of the virtual machine resource.
         """
-        pulumi.set(__self__, "vm", vm)
+        BastionShareableLink.__configure__(
+            vm=vm,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             vm: str,
+             __setter=lambda key, value: ...):
+        __setter("vm", vm)
 
     @property
     @pulumi.getter

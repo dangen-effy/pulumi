@@ -20,6 +20,10 @@ class FooArgs:
         The set of arguments for constructing a Foo resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Foo(pulumi.ComponentResource):

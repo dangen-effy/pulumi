@@ -18,6 +18,10 @@ class MainComponentArgs:
         The set of arguments for constructing a MainComponent resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class MainComponent(pulumi.CustomResource):

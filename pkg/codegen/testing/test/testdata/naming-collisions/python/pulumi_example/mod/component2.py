@@ -18,6 +18,10 @@ class Component2Args:
         The set of arguments for constructing a Component2 resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Component2(pulumi.CustomResource):

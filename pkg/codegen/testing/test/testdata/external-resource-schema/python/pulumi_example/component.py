@@ -25,15 +25,33 @@ class ComponentArgs:
         """
         The set of arguments for constructing a Component resource.
         """
-        pulumi.set(__self__, "required_metadata", required_metadata)
-        pulumi.set(__self__, "required_metadata_array", required_metadata_array)
-        pulumi.set(__self__, "required_metadata_map", required_metadata_map)
+        ComponentArgs.__configure__(
+            required_metadata=required_metadata,
+            required_metadata_array=required_metadata_array,
+            required_metadata_map=required_metadata_map,
+            metadata=metadata,
+            metadata_array=metadata_array,
+            metadata_map=metadata_map,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             required_metadata: pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs'],
+             required_metadata_array: pulumi.Input[Sequence[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]],
+             required_metadata_map: pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]],
+             metadata: Optional[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']] = None,
+             metadata_array: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]]] = None,
+             metadata_map: Optional[pulumi.Input[Mapping[str, pulumi.Input['pulumi_kubernetes.meta.v1.ObjectMetaArgs']]]] = None,
+             __setter=lambda key, value: ...):
+        __setter("required_metadata", required_metadata)
+        __setter("required_metadata_array", required_metadata_array)
+        __setter("required_metadata_map", required_metadata_map)
         if metadata is not None:
-            pulumi.set(__self__, "metadata", metadata)
+            __setter("metadata", metadata)
         if metadata_array is not None:
-            pulumi.set(__self__, "metadata_array", metadata_array)
+            __setter("metadata_array", metadata_array)
         if metadata_map is not None:
-            pulumi.set(__self__, "metadata_map", metadata_map)
+            __setter("metadata_map", metadata_map)
 
     @property
     @pulumi.getter(name="requiredMetadata")
@@ -145,9 +163,17 @@ class Component(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = ComponentArgs.__new__(ComponentArgs)
 
+            if isinstance(metadata, dict):
+                def __setter(key, value):
+                    metadata[key] = value
+                pulumi_kubernetes.meta.v1.ObjectMetaArgs.__configure__(**metadata, __setter=__setter)
             __props__.__dict__["metadata"] = metadata
             __props__.__dict__["metadata_array"] = metadata_array
             __props__.__dict__["metadata_map"] = metadata_map
+            if isinstance(required_metadata, dict):
+                def __setter(key, value):
+                    required_metadata[key] = value
+                pulumi_kubernetes.meta.v1.ObjectMetaArgs.__configure__(**required_metadata, __setter=__setter)
             if required_metadata is None and not opts.urn:
                 raise TypeError("Missing required property 'required_metadata'")
             __props__.__dict__["required_metadata"] = required_metadata

@@ -19,8 +19,16 @@ class IamResourceArgs:
         """
         The set of arguments for constructing a IamResource resource.
         """
+        IamResourceArgs.__configure__(
+            config=config,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             config: Optional[pulumi.Input['pulumi_google_native.iam.v1.AuditConfigArgs']] = None,
+             __setter=lambda key, value: ...):
         if config is not None:
-            pulumi.set(__self__, "config", config)
+            __setter("config", config)
 
     @property
     @pulumi.getter
@@ -79,6 +87,10 @@ class IamResource(pulumi.ComponentResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = IamResourceArgs.__new__(IamResourceArgs)
 
+            if isinstance(config, dict):
+                def __setter(key, value):
+                    config[key] = value
+                pulumi_google_native.iam.v1.AuditConfigArgs.__configure__(**config, __setter=__setter)
             __props__.__dict__["config"] = config
         super(IamResource, __self__).__init__(
             'example:myModule:IamResource',

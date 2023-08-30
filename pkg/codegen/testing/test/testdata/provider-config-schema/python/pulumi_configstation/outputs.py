@@ -19,10 +19,20 @@ class Child(dict):
     def __init__(__self__, *,
                  age: Optional[int] = None,
                  name: Optional[str] = None):
+        Child.__configure__(
+            age=age,
+            name=name,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             age: Optional[int] = None,
+             name: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if age is not None:
-            pulumi.set(__self__, "age", age)
+            __setter("age", age)
         if name is not None:
-            pulumi.set(__self__, "name", name)
+            __setter("name", name)
 
     @property
     @pulumi.getter

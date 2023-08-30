@@ -21,7 +21,15 @@ class ReplicatedBucketArgs:
         The set of arguments for constructing a ReplicatedBucket resource.
         :param pulumi.Input[str] destination_region: Region to which data should be replicated.
         """
-        pulumi.set(__self__, "destination_region", destination_region)
+        ReplicatedBucketArgs.__configure__(
+            destination_region=destination_region,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             destination_region: pulumi.Input[str],
+             __setter=lambda key, value: ...):
+        __setter("destination_region", destination_region)
 
     @property
     @pulumi.getter(name="destinationRegion")

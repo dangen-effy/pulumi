@@ -21,10 +21,20 @@ class CatArgs:
         """
         The set of arguments for constructing a Cat resource.
         """
+        CatArgs.__configure__(
+            age=age,
+            pet=pet,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             age: Optional[pulumi.Input[int]] = None,
+             pet: Optional[pulumi.Input['PetArgs']] = None,
+             __setter=lambda key, value: ...):
         if age is not None:
-            pulumi.set(__self__, "age", age)
+            __setter("age", age)
         if pet is not None:
-            pulumi.set(__self__, "pet", pet)
+            __setter("pet", pet)
 
     @property
     @pulumi.getter
@@ -93,6 +103,10 @@ class Cat(pulumi.CustomResource):
             __props__ = CatArgs.__new__(CatArgs)
 
             __props__.__dict__["age"] = age
+            if isinstance(pet, dict):
+                def __setter(key, value):
+                    pet[key] = value
+                PetArgs.__configure__(**pet, __setter=__setter)
             __props__.__dict__["pet"] = pet
             __props__.__dict__["name"] = None
         super(Cat, __self__).__init__(

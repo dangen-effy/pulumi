@@ -17,5 +17,9 @@ __all__ = [
 class GetCustomDbRolesResult(dict):
     def __init__(__self__):
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 

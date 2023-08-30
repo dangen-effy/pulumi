@@ -19,6 +19,10 @@ class GodArgs:
         The set of arguments for constructing a God resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class God(pulumi.CustomResource):

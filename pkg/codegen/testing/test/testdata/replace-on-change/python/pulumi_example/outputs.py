@@ -29,8 +29,16 @@ class Chew(dict):
         """
         A toy for a dog
         """
+        Chew.__configure__(
+            owner=owner,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             owner: Optional['Dog'] = None,
+             __setter=lambda key, value: ...):
         if owner is not None:
-            pulumi.set(__self__, "owner", owner)
+            __setter("owner", owner)
 
     @property
     @pulumi.getter
@@ -50,12 +58,24 @@ class Laser(dict):
         """
         A Toy for a cat
         """
+        Laser.__configure__(
+            animal=animal,
+            batteries=batteries,
+            light=light,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             animal: Optional['Cat'] = None,
+             batteries: Optional[bool] = None,
+             light: Optional[float] = None,
+             __setter=lambda key, value: ...):
         if animal is not None:
-            pulumi.set(__self__, "animal", animal)
+            __setter("animal", animal)
         if batteries is not None:
-            pulumi.set(__self__, "batteries", batteries)
+            __setter("batteries", batteries)
         if light is not None:
-            pulumi.set(__self__, "light", light)
+            __setter("light", light)
 
     @property
     @pulumi.getter
@@ -77,8 +97,16 @@ class Laser(dict):
 class Rec(dict):
     def __init__(__self__, *,
                  rec1: Optional['outputs.Rec'] = None):
+        Rec.__configure__(
+            rec1=rec1,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             rec1: Optional['outputs.Rec'] = None,
+             __setter=lambda key, value: ...):
         if rec1 is not None:
-            pulumi.set(__self__, "rec1", rec1)
+            __setter("rec1", rec1)
 
     @property
     @pulumi.getter
@@ -98,12 +126,24 @@ class Toy(dict):
         """
         This is a toy
         """
+        Toy.__configure__(
+            associated=associated,
+            color=color,
+            wear=wear,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             associated: Optional['outputs.Toy'] = None,
+             color: Optional[str] = None,
+             wear: Optional[float] = None,
+             __setter=lambda key, value: ...):
         if associated is not None:
-            pulumi.set(__self__, "associated", associated)
+            __setter("associated", associated)
         if color is not None:
-            pulumi.set(__self__, "color", color)
+            __setter("color", color)
         if wear is not None:
-            pulumi.set(__self__, "wear", wear)
+            __setter("wear", wear)
 
     @property
     @pulumi.getter

@@ -23,12 +23,24 @@ class TypeUsesArgs:
         """
         The set of arguments for constructing a TypeUses resource.
         """
+        TypeUsesArgs.__configure__(
+            bar=bar,
+            baz=baz,
+            foo=foo,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             bar: Optional[pulumi.Input['SomeOtherObjectArgs']] = None,
+             baz: Optional[pulumi.Input['ObjectWithNodeOptionalInputsArgs']] = None,
+             foo: Optional[pulumi.Input['ObjectArgs']] = None,
+             __setter=lambda key, value: ...):
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
         if baz is not None:
-            pulumi.set(__self__, "baz", baz)
+            __setter("baz", baz)
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
 
     @property
     @pulumi.getter
@@ -107,8 +119,20 @@ class TypeUses(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = TypeUsesArgs.__new__(TypeUsesArgs)
 
+            if isinstance(bar, dict):
+                def __setter(key, value):
+                    bar[key] = value
+                SomeOtherObjectArgs.__configure__(**bar, __setter=__setter)
             __props__.__dict__["bar"] = bar
+            if isinstance(baz, dict):
+                def __setter(key, value):
+                    baz[key] = value
+                ObjectWithNodeOptionalInputsArgs.__configure__(**baz, __setter=__setter)
             __props__.__dict__["baz"] = baz
+            if isinstance(foo, dict):
+                def __setter(key, value):
+                    foo[key] = value
+                ObjectArgs.__configure__(**foo, __setter=__setter)
             __props__.__dict__["foo"] = foo
         super(TypeUses, __self__).__init__(
             'example::TypeUses',

@@ -219,6 +219,10 @@ func (mod *modContext) unqualifiedObjectTypeName(t *schema.ObjectType, input boo
 }
 
 func (mod *modContext) objectType(t *schema.ObjectType, input bool) string {
+	return "'" + mod.objectClassRef(t, input) + "'"
+}
+
+func (mod *modContext) objectClassRef(t *schema.ObjectType, input bool) string {
 	var prefix string
 	if !input {
 		prefix = "outputs."
@@ -228,7 +232,7 @@ func (mod *modContext) objectType(t *schema.ObjectType, input bool) string {
 
 	if !codegen.PkgEquals(t.PackageReference, mod.pkg) {
 		modName, name := mod.modNameAndName(t.PackageReference, t, input)
-		return fmt.Sprintf("'%s.%s%s%s'", pyPack(t.PackageReference.Name()), modName, prefix, name)
+		return fmt.Sprintf("%s.%s%s%s", pyPack(t.PackageReference.Name()), modName, prefix, name)
 	}
 
 	modName, name := mod.tokenToModule(t.Token), mod.unqualifiedObjectTypeName(t, input)
@@ -237,7 +241,7 @@ func (mod *modContext) objectType(t *schema.ObjectType, input bool) string {
 		if input {
 			rootModName = "_root_inputs."
 		}
-		return fmt.Sprintf("'%s%s'", rootModName, name)
+		return fmt.Sprintf("%s%s", rootModName, name)
 	}
 
 	if modName == mod.mod {
@@ -247,7 +251,7 @@ func (mod *modContext) objectType(t *schema.ObjectType, input bool) string {
 		modName = "_" + strings.ReplaceAll(modName, "/", ".") + "."
 	}
 
-	return fmt.Sprintf("'%s%s%s'", modName, prefix, name)
+	return fmt.Sprintf("%s%s%s", modName, prefix, name)
 }
 
 func (mod *modContext) enumType(enum *schema.EnumType) string {
@@ -1333,6 +1337,23 @@ func (mod *modContext) genResource(res *schema.Resource) (string, error) {
 			fmt.Fprintf(w, "            if %s is not None and not opts.urn:\n", pname)
 			fmt.Fprintf(w, "                warnings.warn(\"\"\"%s\"\"\", DeprecationWarning)\n", escaped)
 			fmt.Fprintf(w, "                pulumi.log.warn(\"\"\"%s is deprecated: %s\"\"\")\n", pname, escaped)
+		}
+
+		unwrapped := prop.Type
+		for {
+			cur := codegen.UnwrapType(unwrapped)
+			if cur == unwrapped {
+				break
+			}
+			unwrapped = cur
+		}
+
+		// Emit logic to configure schema.ObjectType args that have defaults and deprecation messages.
+		if objType, ok := unwrapped.(*schema.ObjectType); ok {
+			fmt.Fprintf(w, "            if isinstance(%s, dict):\n", InitParamName(prop.Name))
+			fmt.Fprintf(w, "                def __setter(key, value):\n")
+			fmt.Fprintf(w, "                    %s[key] = value\n", InitParamName(prop.Name))
+			fmt.Fprintf(w, "                %s.__configure__(**%s, __setter=__setter)\n", mod.objectClassRef(objType, true), InitParamName(prop.Name))
 		}
 
 		// Fill in computed defaults for arguments.
@@ -2591,6 +2612,31 @@ func (mod *modContext) genType(w io.Writer, name, comment string, properties []*
 	mod.genTypeDocstring(w, comment, props)
 	if len(props) == 0 {
 		fmt.Fprintf(w, "        pass\n")
+	} else {
+		fmt.Fprintf(w, "        %s.__configure__(\n", name)
+		for _, prop := range props {
+			pname := PyName(prop.Name)
+			fmt.Fprintf(w, "            %[1]s=%[1]s,\n", pname)
+		}
+		fmt.Fprintf(w, "            __setter=lambda key, value: pulumi.set(__self__, key, value),\n")
+		fmt.Fprintf(w, "        )\n")
+	}
+
+	// Define method signature
+	fmt.Fprintf(w, "    @staticmethod\n")
+	fmt.Fprintf(w, "    def __configure__(*,")
+	for _, prop := range props {
+		pname := PyName(prop.Name)
+		ty := mod.typeString(prop.Type, input, false /*acceptMapping*/)
+		var defaultValue string
+		if !prop.IsRequired() {
+			defaultValue = " = None"
+		}
+		fmt.Fprintf(w, "\n             %s: %s%s,", pname, ty, defaultValue)
+	}
+	fmt.Fprintf(w, "\n             __setter=lambda key, value: ...):\n")
+	if len(props) == 0 {
+		fmt.Fprintf(w, "        pass\n")
 	}
 	for _, prop := range props {
 		pname := PyName(prop.Name)
@@ -2631,7 +2677,7 @@ func (mod *modContext) genType(w io.Writer, name, comment string, properties []*
 			indent = "    "
 		}
 
-		fmt.Fprintf(w, "%s        pulumi.set(__self__, \"%s\", %s)\n", indent, pname, arg)
+		fmt.Fprintf(w, "%s        __setter(\"%s\", %s)\n", indent, pname, arg)
 	}
 	fmt.Fprintf(w, "\n")
 

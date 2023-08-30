@@ -35,66 +35,106 @@ class ModuleResourceArgs:
         """
         The set of arguments for constructing a ModuleResource resource.
         """
+        ModuleResourceArgs.__configure__(
+            plain_required_bool=plain_required_bool,
+            plain_required_const=plain_required_const,
+            plain_required_number=plain_required_number,
+            plain_required_string=plain_required_string,
+            required_bool=required_bool,
+            required_enum=required_enum,
+            required_number=required_number,
+            required_string=required_string,
+            optional_bool=optional_bool,
+            optional_const=optional_const,
+            optional_enum=optional_enum,
+            optional_number=optional_number,
+            optional_string=optional_string,
+            plain_optional_bool=plain_optional_bool,
+            plain_optional_const=plain_optional_const,
+            plain_optional_number=plain_optional_number,
+            plain_optional_string=plain_optional_string,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             plain_required_bool: bool,
+             plain_required_const: str,
+             plain_required_number: float,
+             plain_required_string: str,
+             required_bool: pulumi.Input[bool],
+             required_enum: pulumi.Input['EnumThing'],
+             required_number: pulumi.Input[float],
+             required_string: pulumi.Input[str],
+             optional_bool: Optional[pulumi.Input[bool]] = None,
+             optional_const: Optional[pulumi.Input[str]] = None,
+             optional_enum: Optional[pulumi.Input['EnumThing']] = None,
+             optional_number: Optional[pulumi.Input[float]] = None,
+             optional_string: Optional[pulumi.Input[str]] = None,
+             plain_optional_bool: Optional[bool] = None,
+             plain_optional_const: Optional[str] = None,
+             plain_optional_number: Optional[float] = None,
+             plain_optional_string: Optional[str] = None,
+             __setter=lambda key, value: ...):
         if plain_required_bool is None:
             plain_required_bool = True
-        pulumi.set(__self__, "plain_required_bool", plain_required_bool)
+        __setter("plain_required_bool", plain_required_bool)
         if plain_required_const is None:
             plain_required_const = 'another'
-        pulumi.set(__self__, "plain_required_const", 'val')
+        __setter("plain_required_const", 'val')
         if plain_required_number is None:
             plain_required_number = 42
-        pulumi.set(__self__, "plain_required_number", plain_required_number)
+        __setter("plain_required_number", plain_required_number)
         if plain_required_string is None:
             plain_required_string = 'buzzer'
-        pulumi.set(__self__, "plain_required_string", plain_required_string)
+        __setter("plain_required_string", plain_required_string)
         if required_bool is None:
             required_bool = True
-        pulumi.set(__self__, "required_bool", required_bool)
+        __setter("required_bool", required_bool)
         if required_enum is None:
             required_enum = 4
-        pulumi.set(__self__, "required_enum", required_enum)
+        __setter("required_enum", required_enum)
         if required_number is None:
             required_number = 42
-        pulumi.set(__self__, "required_number", required_number)
+        __setter("required_number", required_number)
         if required_string is None:
             required_string = 'buzzer'
-        pulumi.set(__self__, "required_string", required_string)
+        __setter("required_string", required_string)
         if optional_bool is None:
             optional_bool = True
         if optional_bool is not None:
-            pulumi.set(__self__, "optional_bool", optional_bool)
+            __setter("optional_bool", optional_bool)
         if optional_const is None:
             optional_const = 'another'
         if optional_const is not None:
-            pulumi.set(__self__, "optional_const", 'val')
+            __setter("optional_const", 'val')
         if optional_enum is None:
             optional_enum = 8
         if optional_enum is not None:
-            pulumi.set(__self__, "optional_enum", optional_enum)
+            __setter("optional_enum", optional_enum)
         if optional_number is None:
             optional_number = 42
         if optional_number is not None:
-            pulumi.set(__self__, "optional_number", optional_number)
+            __setter("optional_number", optional_number)
         if optional_string is None:
             optional_string = 'buzzer'
         if optional_string is not None:
-            pulumi.set(__self__, "optional_string", optional_string)
+            __setter("optional_string", optional_string)
         if plain_optional_bool is None:
             plain_optional_bool = True
         if plain_optional_bool is not None:
-            pulumi.set(__self__, "plain_optional_bool", plain_optional_bool)
+            __setter("plain_optional_bool", plain_optional_bool)
         if plain_optional_const is None:
             plain_optional_const = 'another'
         if plain_optional_const is not None:
-            pulumi.set(__self__, "plain_optional_const", 'val')
+            __setter("plain_optional_const", 'val')
         if plain_optional_number is None:
             plain_optional_number = 42
         if plain_optional_number is not None:
-            pulumi.set(__self__, "plain_optional_number", plain_optional_number)
+            __setter("plain_optional_number", plain_optional_number)
         if plain_optional_string is None:
             plain_optional_string = 'buzzer'
         if plain_optional_string is not None:
-            pulumi.set(__self__, "plain_optional_string", plain_optional_string)
+            __setter("plain_optional_string", plain_optional_string)
 
     @property
     @pulumi.getter

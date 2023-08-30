@@ -18,6 +18,10 @@ class RecArgs:
         The set of arguments for constructing a Rec resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class Rec(pulumi.CustomResource):

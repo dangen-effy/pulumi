@@ -22,9 +22,19 @@ class StaticPageArgs:
         The set of arguments for constructing a StaticPage resource.
         :param pulumi.Input[str] index_content: The HTML content for index.html.
         """
-        pulumi.set(__self__, "index_content", index_content)
+        StaticPageArgs.__configure__(
+            index_content=index_content,
+            foo=foo,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             index_content: pulumi.Input[str],
+             foo: Optional['FooArgs'] = None,
+             __setter=lambda key, value: ...):
+        __setter("index_content", index_content)
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
 
     @property
     @pulumi.getter(name="indexContent")
@@ -98,6 +108,10 @@ class StaticPage(pulumi.ComponentResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = StaticPageArgs.__new__(StaticPageArgs)
 
+            if isinstance(foo, dict):
+                def __setter(key, value):
+                    foo[key] = value
+                FooArgs.__configure__(**foo, __setter=__setter)
             __props__.__dict__["foo"] = foo
             if index_content is None and not opts.urn:
                 raise TypeError("Missing required property 'index_content'")

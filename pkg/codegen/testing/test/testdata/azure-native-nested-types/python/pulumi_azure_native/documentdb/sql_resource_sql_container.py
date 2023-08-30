@@ -19,6 +19,10 @@ class SqlResourceSqlContainerArgs:
         The set of arguments for constructing a SqlResourceSqlContainer resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class SqlResourceSqlContainer(pulumi.CustomResource):

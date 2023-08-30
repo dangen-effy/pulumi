@@ -21,17 +21,31 @@ class ContainerArgs:
                  brightness: Optional[pulumi.Input['ContainerBrightness']] = None,
                  color: Optional[pulumi.Input[Union['ContainerColor', str]]] = None,
                  material: Optional[pulumi.Input[str]] = None):
+        ContainerArgs.__configure__(
+            size=size,
+            brightness=brightness,
+            color=color,
+            material=material,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             size: pulumi.Input['ContainerSize'],
+             brightness: Optional[pulumi.Input['ContainerBrightness']] = None,
+             color: Optional[pulumi.Input[Union['ContainerColor', str]]] = None,
+             material: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if size is None:
             size = 4
-        pulumi.set(__self__, "size", size)
+        __setter("size", size)
         if brightness is None:
             brightness = 1
         if brightness is not None:
-            pulumi.set(__self__, "brightness", brightness)
+            __setter("brightness", brightness)
         if color is not None:
-            pulumi.set(__self__, "color", color)
+            __setter("color", color)
         if material is not None:
-            pulumi.set(__self__, "material", material)
+            __setter("material", material)
 
     @property
     @pulumi.getter

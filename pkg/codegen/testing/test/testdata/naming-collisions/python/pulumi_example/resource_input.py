@@ -18,6 +18,10 @@ class ResourceInputArgs:
         The set of arguments for constructing a ResourceInput resource.
         """
         pass
+    @staticmethod
+    def __configure__(*,
+             __setter=lambda key, value: ...):
+        pass
 
 
 class ResourceInput(pulumi.CustomResource):

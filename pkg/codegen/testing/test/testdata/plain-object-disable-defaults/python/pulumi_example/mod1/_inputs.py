@@ -20,10 +20,18 @@ class TypArgs:
         """
         A test for namespaces (mod 1)
         """
+        TypArgs.__configure__(
+            val=val,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             val: Optional[pulumi.Input[str]] = None,
+             __setter=lambda key, value: ...):
         if val is None:
             val = 'mod1'
         if val is not None:
-            pulumi.set(__self__, "val", val)
+            __setter("val", val)
 
     @property
     @pulumi.getter

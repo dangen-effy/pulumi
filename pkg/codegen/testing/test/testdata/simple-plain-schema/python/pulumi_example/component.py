@@ -29,23 +29,49 @@ class ComponentArgs:
         """
         The set of arguments for constructing a Component resource.
         """
-        pulumi.set(__self__, "a", a)
-        pulumi.set(__self__, "c", c)
-        pulumi.set(__self__, "e", e)
+        ComponentArgs.__configure__(
+            a=a,
+            c=c,
+            e=e,
+            b=b,
+            bar=bar,
+            baz=baz,
+            baz_map=baz_map,
+            d=d,
+            f=f,
+            foo=foo,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             a: bool,
+             c: int,
+             e: str,
+             b: Optional[bool] = None,
+             bar: Optional['FooArgs'] = None,
+             baz: Optional[Sequence[pulumi.Input['FooArgs']]] = None,
+             baz_map: Optional[Mapping[str, pulumi.Input['FooArgs']]] = None,
+             d: Optional[int] = None,
+             f: Optional[str] = None,
+             foo: Optional[pulumi.Input['FooArgs']] = None,
+             __setter=lambda key, value: ...):
+        __setter("a", a)
+        __setter("c", c)
+        __setter("e", e)
         if b is not None:
-            pulumi.set(__self__, "b", b)
+            __setter("b", b)
         if bar is not None:
-            pulumi.set(__self__, "bar", bar)
+            __setter("bar", bar)
         if baz is not None:
-            pulumi.set(__self__, "baz", baz)
+            __setter("baz", baz)
         if baz_map is not None:
-            pulumi.set(__self__, "baz_map", baz_map)
+            __setter("baz_map", baz_map)
         if d is not None:
-            pulumi.set(__self__, "d", d)
+            __setter("d", d)
         if f is not None:
-            pulumi.set(__self__, "f", f)
+            __setter("f", f)
         if foo is not None:
-            pulumi.set(__self__, "foo", foo)
+            __setter("foo", foo)
 
     @property
     @pulumi.getter
@@ -207,6 +233,10 @@ class Component(pulumi.ComponentResource):
                 raise TypeError("Missing required property 'a'")
             __props__.__dict__["a"] = a
             __props__.__dict__["b"] = b
+            if isinstance(bar, dict):
+                def __setter(key, value):
+                    bar[key] = value
+                FooArgs.__configure__(**bar, __setter=__setter)
             __props__.__dict__["bar"] = bar
             __props__.__dict__["baz"] = baz
             __props__.__dict__["baz_map"] = baz_map
@@ -218,6 +248,10 @@ class Component(pulumi.ComponentResource):
                 raise TypeError("Missing required property 'e'")
             __props__.__dict__["e"] = e
             __props__.__dict__["f"] = f
+            if isinstance(foo, dict):
+                def __setter(key, value):
+                    foo[key] = value
+                FooArgs.__configure__(**foo, __setter=__setter)
             __props__.__dict__["foo"] = foo
         super(Component, __self__).__init__(
             'example::Component',

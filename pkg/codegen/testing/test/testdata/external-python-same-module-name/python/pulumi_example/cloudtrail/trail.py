@@ -20,10 +20,20 @@ class TrailArgs:
         """
         The set of arguments for constructing a Trail resource.
         """
+        TrailArgs.__configure__(
+            advanced_event_selectors=advanced_event_selectors,
+            trail=trail,
+            __setter=lambda key, value: pulumi.set(__self__, key, value),
+        )
+    @staticmethod
+    def __configure__(*,
+             advanced_event_selectors: Optional[pulumi.Input[Sequence[pulumi.Input['pulumi_aws.cloudtrail.TrailAdvancedEventSelectorArgs']]]] = None,
+             trail: Optional[pulumi.Input['pulumi_aws.cloudtrail.Trail']] = None,
+             __setter=lambda key, value: ...):
         if advanced_event_selectors is not None:
-            pulumi.set(__self__, "advanced_event_selectors", advanced_event_selectors)
+            __setter("advanced_event_selectors", advanced_event_selectors)
         if trail is not None:
-            pulumi.set(__self__, "trail", trail)
+            __setter("trail", trail)
 
     @property
     @pulumi.getter(name="advancedEventSelectors")
