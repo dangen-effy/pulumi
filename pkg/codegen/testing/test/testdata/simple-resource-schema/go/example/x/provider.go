@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 

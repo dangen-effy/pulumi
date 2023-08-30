@@ -8,16 +8,16 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 
 type TypeUses struct {
 	pulumi.CustomResourceState
 
-	Bar pux.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput]                           `pulumi:"bar"`
-	Baz pux.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] `pulumi:"baz"`
-	Foo pux.GPtrOutput[Object, ObjectOutput]                                             `pulumi:"foo"`
+	Bar pulumix.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput]                           `pulumi:"bar"`
+	Baz pulumix.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] `pulumi:"baz"`
+	Foo pulumix.GPtrOutput[Object, ObjectOutput]                                             `pulumi:"foo"`
 }
 
 // NewTypeUses registers a new resource with the given unique name, arguments, and options.
@@ -96,18 +96,18 @@ func (o TypeUsesOutput) ToOutput(ctx context.Context) pulumix.Output[*TypeUses] 
 	}
 }
 
-func (o TypeUsesOutput) Bar() pux.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput] {
-	return pux.Apply(o, func(v *TypeUses) pux.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput] { return v.Bar })
+func (o TypeUsesOutput) Bar() pulumix.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput] {
+	return pulumix.Join(o, func(v *TypeUses) pulumix.GPtrOutput[SomeOtherObject, SomeOtherObjectOutput] { return v.Bar })
 }
 
-func (o TypeUsesOutput) Baz() pux.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] {
-	return pux.Apply(o, func(v *TypeUses) pux.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] {
+func (o TypeUsesOutput) Baz() pulumix.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] {
+	return pulumix.Join(o, func(v *TypeUses) pulumix.GPtrOutput[ObjectWithNodeOptionalInputs, ObjectWithNodeOptionalInputsOutput] {
 		return v.Baz
 	})
 }
 
-func (o TypeUsesOutput) Foo() pux.GPtrOutput[Object, ObjectOutput] {
-	return pux.Apply(o, func(v *TypeUses) pux.GPtrOutput[Object, ObjectOutput] { return v.Foo })
+func (o TypeUsesOutput) Foo() pulumix.GPtrOutput[Object, ObjectOutput] {
+	return pulumix.Join(o, func(v *TypeUses) pulumix.GPtrOutput[Object, ObjectOutput] { return v.Foo })
 }
 
 func init() {

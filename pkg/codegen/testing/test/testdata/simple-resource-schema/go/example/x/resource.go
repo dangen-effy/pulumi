@@ -8,15 +8,15 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 
 type Resource struct {
 	pulumi.CustomResourceState
 
-	Bar pux.Output[*string] `pulumi:"bar"`
-	Baz pux.Output[*string] `pulumi:"baz"`
+	Bar pulumix.Output[*string] `pulumi:"bar"`
+	Baz pulumix.Output[*string] `pulumi:"baz"`
 }
 
 // NewResource registers a new resource with the given unique name, arguments, and options.
@@ -99,12 +99,12 @@ func (o ResourceOutput) ToOutput(ctx context.Context) pulumix.Output[*Resource] 
 	}
 }
 
-func (o ResourceOutput) Bar() pux.Output[*string] {
-	return pux.Apply(o, func(v *Resource) pux.Output[*string] { return v.Bar })
+func (o ResourceOutput) Bar() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v *Resource) pulumix.Output[*string] { return v.Bar })
 }
 
-func (o ResourceOutput) Baz() pux.Output[*string] {
-	return pux.Apply(o, func(v *Resource) pux.Output[*string] { return v.Baz })
+func (o ResourceOutput) Baz() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v *Resource) pulumix.Output[*string] { return v.Baz })
 }
 
 func init() {

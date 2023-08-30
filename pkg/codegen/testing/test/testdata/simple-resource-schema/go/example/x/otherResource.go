@@ -8,14 +8,14 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 
 type OtherResource struct {
 	pulumi.ResourceState
 
-	Foo pux.GPtrOutput[Resource, ResourceOutput] `pulumi:"foo"`
+	Foo pulumix.GPtrOutput[Resource, ResourceOutput] `pulumi:"foo"`
 }
 
 // NewOtherResource registers a new resource with the given unique name, arguments, and options.
@@ -67,8 +67,8 @@ func (o OtherResourceOutput) ToOutput(ctx context.Context) pulumix.Output[*Other
 	}
 }
 
-func (o OtherResourceOutput) Foo() pux.GPtrOutput[Resource, ResourceOutput] {
-	return pux.Apply(o, func(v *OtherResource) pux.GPtrOutput[Resource, ResourceOutput] { return v.Foo })
+func (o OtherResourceOutput) Foo() pulumix.GPtrOutput[Resource, ResourceOutput] {
+	return pulumix.Join(o, func(v *OtherResource) pulumix.GPtrOutput[Resource, ResourceOutput] { return v.Foo })
 }
 
 func init() {

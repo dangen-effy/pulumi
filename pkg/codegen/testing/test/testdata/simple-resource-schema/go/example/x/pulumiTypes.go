@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 
@@ -60,8 +60,8 @@ func (o ConfigMapOutput) ToOutput(ctx context.Context) pulumix.Output[ConfigMap]
 	}
 }
 
-func (o ConfigMapOutput) Config() pux.Output[*string] {
-	return pux.Apply(o, func(v ConfigMap) pux.Output[*string] { return v.Config })
+func (o ConfigMapOutput) Config() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v ConfigMap) pulumix.Output[*string] { return v.Config })
 }
 
 type Object struct {
@@ -122,26 +122,26 @@ func (o ObjectOutput) ToOutput(ctx context.Context) pulumix.Output[Object] {
 	}
 }
 
-func (o ObjectOutput) Bar() pux.Output[*string] {
-	return pux.Apply(o, func(v Object) pux.Output[*string] { return v.Bar })
+func (o ObjectOutput) Bar() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v Object) pulumix.Output[*string] { return v.Bar })
 }
 
-func (o ObjectOutput) Configs() pux.Output[interface{}] {
-	return pux.Apply(o, func(v Object) pux.Output[interface{}] { return v.Configs })
+func (o ObjectOutput) Configs() pulumix.Output[interface{}] {
+	return pulumix.Join(o, func(v Object) pulumix.Output[interface{}] { return v.Configs })
 }
 
-func (o ObjectOutput) Foo() pux.GPtrOutput[Resource, ResourceOutput] {
-	return pux.Apply(o, func(v Object) pux.GPtrOutput[Resource, ResourceOutput] { return v.Foo })
+func (o ObjectOutput) Foo() pulumix.GPtrOutput[Resource, ResourceOutput] {
+	return pulumix.Join(o, func(v Object) pulumix.GPtrOutput[Resource, ResourceOutput] { return v.Foo })
 }
 
 // List of lists of other objects
-func (o ObjectOutput) Others() pux.Output[interface{}] {
-	return pux.Apply(o, func(v Object) pux.Output[interface{}] { return v.Others })
+func (o ObjectOutput) Others() pulumix.Output[interface{}] {
+	return pulumix.Join(o, func(v Object) pulumix.Output[interface{}] { return v.Others })
 }
 
 // Mapping from string to list of some other object
-func (o ObjectOutput) StillOthers() pux.Output[interface{}] {
-	return pux.Apply(o, func(v Object) pux.Output[interface{}] { return v.StillOthers })
+func (o ObjectOutput) StillOthers() pulumix.Output[interface{}] {
+	return pulumix.Join(o, func(v Object) pulumix.Output[interface{}] { return v.StillOthers })
 }
 
 type ObjectWithNodeOptionalInputs struct {
@@ -192,12 +192,12 @@ func (o ObjectWithNodeOptionalInputsOutput) ToOutput(ctx context.Context) pulumi
 	}
 }
 
-func (o ObjectWithNodeOptionalInputsOutput) Bar() pux.Output[*int] {
-	return pux.Apply(o, func(v ObjectWithNodeOptionalInputs) pux.Output[*int] { return v.Bar })
+func (o ObjectWithNodeOptionalInputsOutput) Bar() pulumix.Output[*int] {
+	return pulumix.Join(o, func(v ObjectWithNodeOptionalInputs) pulumix.Output[*int] { return v.Bar })
 }
 
 func (o ObjectWithNodeOptionalInputsOutput) Foo() string {
-	return pux.Apply(o, func(v ObjectWithNodeOptionalInputs) string { return v.Foo })
+	return pulumix.Join(o, func(v ObjectWithNodeOptionalInputs) string { return v.Foo })
 }
 
 type OtherResourceOutputType struct {
@@ -246,8 +246,8 @@ func (o OtherResourceOutputTypeOutput) ToOutput(ctx context.Context) pulumix.Out
 	}
 }
 
-func (o OtherResourceOutputTypeOutput) Foo() pux.Output[*string] {
-	return pux.Apply(o, func(v OtherResourceOutputType) pux.Output[*string] { return v.Foo })
+func (o OtherResourceOutputTypeOutput) Foo() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v OtherResourceOutputType) pulumix.Output[*string] { return v.Foo })
 }
 
 type SomeOtherObject struct {
@@ -296,8 +296,8 @@ func (o SomeOtherObjectOutput) ToOutput(ctx context.Context) pulumix.Output[Some
 	}
 }
 
-func (o SomeOtherObjectOutput) Baz() pux.Output[*string] {
-	return pux.Apply(o, func(v SomeOtherObject) pux.Output[*string] { return v.Baz })
+func (o SomeOtherObjectOutput) Baz() pulumix.Output[*string] {
+	return pulumix.Join(o, func(v SomeOtherObject) pulumix.Output[*string] { return v.Baz })
 }
 
 func init() {

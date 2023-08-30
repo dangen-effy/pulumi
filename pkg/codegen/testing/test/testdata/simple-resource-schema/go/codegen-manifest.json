@@ -17,6 +17,7 @@
     "example/x/barResource.go",
     "example/x/doc.go",
     "example/x/fooResource.go",
+    "example/x/init.go",
     "example/x/otherResource.go",
     "example/x/provider.go",
     "example/x/pulumiTypes.go",

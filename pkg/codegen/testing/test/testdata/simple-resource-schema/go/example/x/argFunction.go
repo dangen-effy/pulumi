@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-	pux "github.com/pulumi/pulumi/sdk/v3/go/pulumix"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumix"
 	"simple-resource-schema/example/internal"
 )
 
@@ -30,8 +30,8 @@ type ArgFunctionResult struct {
 	Result *Resource `pulumi:"result"`
 }
 
-func ArgFunctionOutput(ctx *pulumi.Context, args ArgFunctionOutputArgs, opts ...pulumi.InvokeOption) pux.Output[*ArgFunctionResult] {
-	return pux.Apply(args, func(plainArgs ArgFunctionArgs) (ArgFunctionResult, error) {
+func ArgFunctionOutput(ctx *pulumi.Context, args ArgFunctionOutputArgs, opts ...pulumi.InvokeOption) pulumix.Output[ArgFunctionResult] {
+	return pulumix.Apply(args.ToOutput(), func(plainArgs ArgFunctionArgs) (ArgFunctionResult, error) {
 		r, err := ArgFunction(ctx, &plainArgs, opts...)
 		var s ArgFunctionResult
 		if r != nil {
@@ -43,4 +43,13 @@ func ArgFunctionOutput(ctx *pulumi.Context, args ArgFunctionOutputArgs, opts ...
 
 type ArgFunctionOutputArgs struct {
 	Arg1 pulumi.Input[*Resource] `pulumi:"arg1"`
+}
+
+func (args ArgFunctionOutputArgs) ToOutput() pulumix.Output[ArgFunctionArgs] {
+	allArgs := pulumix.All(args.Arg1)
+	return pulumix.Apply(allArgs, func(resolvedArgs []interface{}) ArgFunctionArgs {
+		return ArgFunctionArgs{
+			Arg1: resolvedArgs[0].(*Resource),
+		}
+	})
 }

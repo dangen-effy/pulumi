@@ -895,18 +895,18 @@ func (pkg *pkgContext) genericElementType(schemaType schema.Type) (string, bool)
 }
 
 // genericOutputTypeImpl is similar to outputTypeImpl, but it generates the output type variants.
-// for example instead of pulumi.StringOutput, it generates pux.Output[string]
+// for example instead of pulumi.StringOutput, it generates pulumix.Output[string]
 func (pkg *pkgContext) genericOutputTypeImpl(t schema.Type) string {
 	switch t := t.(type) {
 	case *schema.OptionalType:
 		elementType, isPrimitive := pkg.genericElementType(t.ElementType)
 		if elementType == "interface{}" {
-			return fmt.Sprintf("pux.Output[%s]", elementType)
+			return fmt.Sprintf("pulumix.Output[%s]", elementType)
 		}
 
 		if isPrimitive {
-			// for example OptionalType{StringType} becomes pux.Output[*string]
-			return fmt.Sprintf("pux.Output[*%s]", elementType)
+			// for example OptionalType{StringType} becomes pulumix.Output[*string]
+			return fmt.Sprintf("pulumix.Output[*%s]", elementType)
 		}
 
 		if pkg.isExternalReference(t.ElementType) {
@@ -926,31 +926,31 @@ func (pkg *pkgContext) genericOutputTypeImpl(t schema.Type) string {
 		return pkg.genericOutputTypeImpl(t.ElementType)
 	case *schema.EnumType:
 		elementType, _ := pkg.genericElementType(t)
-		return fmt.Sprintf("pux.Output[%s]", elementType)
+		return fmt.Sprintf("pulumix.Output[%s]", elementType)
 	case *schema.ArrayType:
 		elementType, isPrimitive := pkg.genericElementType(t.ElementType)
 		if isPrimitive {
-			return fmt.Sprintf("pux.ArrayOutput[%s]", elementType)
+			return fmt.Sprintf("pulumix.ArrayOutput[%s]", elementType)
 		}
 
 		// for non-primitive types such as objects and resources
 		// use GArrayOutput[Type, TypeOutput]
-		return fmt.Sprintf("pux.GArrayOutput[%s, %sOutput]", elementType, elementType)
+		return fmt.Sprintf("pulumix.GArrayOutput[%s, %sOutput]", elementType, elementType)
 	case *schema.MapType:
 		elementType, isPrimitive := pkg.genericElementType(t.ElementType)
 		if isPrimitive {
-			return fmt.Sprintf("pux.MapOutput[%s]", elementType)
+			return fmt.Sprintf("pulumix.MapOutput[%s]", elementType)
 		}
 
 		// for non-primitive types such as objects and resources
 		// use GMapOutput[Type, TypeOutput]
-		return fmt.Sprintf("pux.GMapOutput[%s, %sOutput]", elementType, elementType)
+		return fmt.Sprintf("pulumix.GMapOutput[%s, %sOutput]", elementType, elementType)
 	case *schema.ObjectType:
 		objectTypeName, _ := pkg.genericElementType(t)
-		return fmt.Sprintf("pux.GPtrOutput[%s, %sOutput]", objectTypeName, objectTypeName)
+		return fmt.Sprintf("pulumix.GPtrOutput[%s, %sOutput]", objectTypeName, objectTypeName)
 	case *schema.ResourceType:
 		resourceTypeName, _ := pkg.genericElementType(t)
-		return fmt.Sprintf("pux.GPtrOutput[%s, %sOutput]", resourceTypeName, resourceTypeName)
+		return fmt.Sprintf("pulumix.GPtrOutput[%s, %sOutput]", resourceTypeName, resourceTypeName)
 	case *schema.TokenType:
 		// Use the underlying type for now.
 		if t.UnderlyingType != nil {
@@ -958,7 +958,7 @@ func (pkg *pkgContext) genericOutputTypeImpl(t schema.Type) string {
 		}
 
 		tokenType := pkg.tokenToType(t.Token)
-		return fmt.Sprintf("pux.Output[%s]", tokenType)
+		return fmt.Sprintf("pulumix.Output[%s]", tokenType)
 	case *schema.UnionType:
 		// If the union is actually a relaxed enum type, use the underlying
 		// type for the output instead
@@ -968,7 +968,7 @@ func (pkg *pkgContext) genericOutputTypeImpl(t schema.Type) string {
 			}
 		}
 		// TODO(pdg): union types
-		return "pux.Output[interface{}]"
+		return "pulumix.Output[interface{}]"
 	case *schema.InputType:
 		// We can't make output types for input types. We instead strip the input and try again.
 		return pkg.genericOutputTypeImpl(t.ElementType)
@@ -989,7 +989,7 @@ func (pkg *pkgContext) outputType(t schema.Type) string {
 }
 
 // genericOutputType returns a reference to the Go output type that corresponds to the given schema type.
-// For example, given a schema.StringType, genericOutputType returns "pux.Output[string]",
+// For example, given a schema.StringType, genericOutputType returns "pulumix.Output[string]",
 // and given a *schema.ObjectType with the token pkg:mod:Name,
 // outputType returns "mod.NameOutput" or "NameOutput", depending on whether the object type lives in a
 // different module than the one associated with the receiver.
@@ -1171,8 +1171,8 @@ func genInputImplementationWithArgs(w io.Writer, genArgs genInputImplementationA
 		fmt.Fprintf(w, "\treturn pulumi.ToOutputWithContext(ctx, i).(%sOutput)\n", name)
 		fmt.Fprintf(w, "}\n\n")
 
-		// Generate 'ToOuput(context.Context) pux.Output[T]' method
-		// to satisfy pux.Input[T].
+		// Generate 'ToOuput(context.Context) pulumix.Output[T]' method
+		// to satisfy pulumix.Input[T].
 		fmt.Fprintf(w, "func (i %s) ToOutput(ctx context.Context) pulumix.Output[%s] {\n", receiverType, elementType)
 		fmt.Fprintf(w, "\treturn pulumix.Output[%s]{\n", elementType)
 		fmt.Fprintf(w, "\t\tOutputState: i.To%sOutputWithContext(ctx).OutputState,\n", Title(name))
@@ -1195,8 +1195,8 @@ func genInputImplementationWithArgs(w io.Writer, genArgs genInputImplementationA
 		fmt.Fprintf(w, "}\n\n")
 
 		if !hasToOutput {
-			// Generate 'ToOuput(context.Context) pux.Output[*T]' method
-			// to satisfy pux.Input[*T].
+			// Generate 'ToOuput(context.Context) pulumix.Output[*T]' method
+			// to satisfy pulumix.Input[*T].
 			fmt.Fprintf(w, "func (i %s) ToOutput(ctx context.Context) pulumix.Output[*%s] {\n", receiverType, elementType)
 			fmt.Fprintf(w, "\treturn pulumix.Output[*%s]{\n", elementType)
 			fmt.Fprintf(w, "\t\tOutputState: i.To%sPtrOutputWithContext(ctx).OutputState,\n", Title(name))
@@ -1233,8 +1233,8 @@ func genOutputType(w io.Writer, baseName, elementType string, ptrMethods, usingG
 		fmt.Fprintf(w, "}\n\n")
 	}
 
-	// Generate 'ToOuput(context.Context) pux.Output[T]' method
-	// to satisfy pux.Input[T].
+	// Generate 'ToOuput(context.Context) pulumix.Output[T]' method
+	// to satisfy pulumix.Input[T].
 	fmt.Fprintf(w, "func (o %sOutput) ToOutput(ctx context.Context) pulumix.Output[%s] {\n", baseName, elementType)
 	fmt.Fprintf(w, "\treturn pulumix.Output[%s]{\n", elementType)
 	fmt.Fprintf(w, "\t\tOutputState: o.OutputState,\n")
@@ -1438,7 +1438,7 @@ func (pkg *pkgContext) genEnumInputTypes(w io.Writer, name string, enumType *sch
 	fmt.Fprintf(w, "}\n")
 	fmt.Fprintln(w)
 
-	// ToOutput implementation for pux.Input.
+	// ToOutput implementation for pulumix.Input.
 	fmt.Fprintf(w, "func (in *%sPtr) ToOutput(ctx context.Context) pulumix.Output[*%s] {\n", typeName, name)
 	fmt.Fprintf(w, "\treturn pulumix.Output[*%s]{\n", name)
 	fmt.Fprintf(w, "\t\tOutputState: in.To%sPtrOutputWithContext(ctx).OutputState,\n", name)
@@ -1726,7 +1726,7 @@ func (pkg *pkgContext) genOutputTypes(w io.Writer, genArgs genOutputTypesArgs) {
 				fmt.Fprintf(w, "\treturn o.ApplyT(func (v %s) %s { return v.%s }).(%s)\n",
 					name, applyType, pkg.fieldName(nil, p), outputType)
 			} else {
-				fmt.Fprintf(w, "\treturn pux.Apply(o, func (v %s) %s { return v.%s })\n",
+				fmt.Fprintf(w, "\treturn pulumix.Join(o, func (v %s) %s { return v.%s })\n",
 					name, outputType, pkg.fieldName(nil, p))
 			}
 
@@ -2325,8 +2325,8 @@ func (pkg *pkgContext) genResource(
 					fmt.Fprintf(w, "\treturn o.ApplyT(func (v %s%sResult) %s { return v.%s }).(%s)\n", outputStructName, methodName,
 						pkg.typeString(codegen.ResolvedType(p.Type)), Title(p.Name), outputTypeName)
 				} else {
-					fmt.Fprintf(w, "\treturn pux.Apply(o, func(v %s%sResult) %s { return v.%s })\n", outputStructName, methodName,
-						pkg.typeString(codegen.ResolvedType(p.Type)), Title(p.Name))
+					fmt.Fprintf(w, "\treturn pulumix.Apply(o, func(v %s%sResult) %s { return v.%s })\n", outputStructName, methodName,
+						pkg.genericOutputType(codegen.ResolvedType(p.Type)), Title(p.Name))
 				}
 
 				fmt.Fprintf(w, "}\n")
@@ -2379,7 +2379,7 @@ func (pkg *pkgContext) genResource(
 			fmt.Fprintf(w, "\treturn o.ApplyT(func (v *%s) %s { return v.%s }).(%s)\n",
 				name, outputType, pkg.fieldName(r, p), outputType)
 		} else {
-			fmt.Fprintf(w, "\treturn pux.Apply(o, func (v *%s) %s { return v.%s })\n",
+			fmt.Fprintf(w, "\treturn pulumix.Join(o, func (v *%s) %s { return v.%s })\n",
 				name, outputType, pkg.fieldName(r, p))
 		}
 
@@ -2443,7 +2443,7 @@ func (pkg *pkgContext) genGenericVariantFunctionCodeFile(f *schema.Function) (st
 	importsAndAliases := map[string]string{}
 	pkg.getImports(f, importsAndAliases)
 	importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumi"] = ""
-	importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = "pux"
+	importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 	importsAndAliases[path.Join(pkg.importBasePath, pkg.internalModuleName)] = ""
 	buffer := &bytes.Buffer{}
 
@@ -2587,11 +2587,11 @@ func (pkg *pkgContext) genFunctionOutputGenericVersion(w io.Writer, f *schema.Fu
 	originalName := pkg.functionName(f)
 	name := originalName + "Output"
 	originalResultTypeName := pkg.functionResultTypeName(f)
-	resultTypeName := fmt.Sprintf("pux.Output[*%s]", originalResultTypeName)
+	resultTypeName := fmt.Sprintf("pulumix.Output[%s]", originalResultTypeName)
 
 	code := `
 func ${fn}Output(ctx *pulumi.Context, args ${fn}OutputArgs, opts ...pulumi.InvokeOption) ${outputType} {
-	return pux.Apply(args, func(plainArgs ${fn}Args) (${fn}Result, error) {
+	return pulumix.Apply(args.ToOutput(), func(plainArgs ${fn}Args) (${fn}Result, error) {
 		r, err := ${fn}(ctx, &plainArgs, opts...)
 		var s ${fn}Result
 		if r != nil {
@@ -2608,6 +2608,33 @@ func ${fn}Output(ctx *pulumi.Context, args ${fn}OutputArgs, opts ...pulumi.Invok
 
 	useGenericTypes := true
 	pkg.genInputArgsStruct(w, name+"Args", f.Inputs.InputShape, useGenericTypes)
+
+	receiverType := name + "Args"
+	plainType := originalName + "Args"
+
+	fmt.Fprintf(w, "func (args %s) ToOutput() pulumix.Output[%s] {\n", receiverType, plainType)
+	fmt.Fprint(w, "\tallArgs := pulumix.All(")
+	for i, p := range f.Inputs.Properties {
+		fmt.Fprintf(w, "\t\targs.%s", pkg.fieldName(nil, p))
+		if i < len(f.Inputs.Properties)-1 {
+			fmt.Fprint(w, ",\n")
+		}
+	}
+	fmt.Fprint(w, ")\n")
+
+	fmt.Fprintf(w, "\treturn pulumix.Apply(allArgs, func(resolvedArgs []interface{}) %s {\n", plainType)
+	fmt.Fprintf(w, "\t\treturn %s{\n", plainType)
+	for i, p := range f.Inputs.Properties {
+		fmt.Fprintf(w, "\t\t\t%s: resolvedArgs[%d].(%s),\n",
+			pkg.fieldName(nil, p),
+			i,
+			pkg.typeString(p.Type))
+	}
+	fmt.Fprintf(w, "\t\t}\n")
+
+	fmt.Fprintf(w, "\t})\n")
+
+	fmt.Fprintf(w, "}\n\n")
 }
 
 func (pkg *pkgContext) genFunctionOutputVersion(w io.Writer, f *schema.Function, useGenericTypes bool) {
@@ -4174,7 +4201,7 @@ func GeneratePackage(tool string, pkg *schema.Package) (map[string][]byte, error
 			setFile(resourceFilePath, buffer.String())
 
 			genericVariantBuffer := &bytes.Buffer{}
-			importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = "pux"
+			importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 			pkg.genHeader(genericVariantBuffer, []string{"context", "reflect"}, importsAndAliases, false /* isUtil */)
 			if err := pkg.genResource(
 				genericVariantBuffer,
@@ -4330,6 +4357,13 @@ func GeneratePackage(tool string, pkg *schema.Package) (map[string][]byte, error
 			}
 
 			setFile(path.Join(mod, "init.go"), buffer.String())
+
+			genericVariantBuffer := &bytes.Buffer{}
+			if err := pkg.genResourceModule(genericVariantBuffer); err != nil {
+				return nil, err
+			}
+
+			setGenericVariantFile(path.Join(mod, "init.go"), genericVariantBuffer.String())
 		}
 	}
 
@@ -4367,7 +4401,7 @@ func generateTypes(
 	}
 
 	if useGenericTypes {
-		importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = "pux"
+		importsAndAliases["github.com/pulumi/pulumi/sdk/v3/go/pulumix"] = ""
 	}
 
 	importsAndAliases[path.Join(pkg.importBasePath, pkg.internalModuleName)] = ""
